@@ -1,0 +1,2 @@
+openai key: sk-aRdCGLUyL6-710WmaSQtBWK5WmkCDgemjcNldDR7cQT3BlbkFJsf-30vz--8kCT94MEz0rpEu9h8HYhsP99oCWFgy1MA
+org-key:org-T8BKsQkjjuGmQD7ga9hYiGZX

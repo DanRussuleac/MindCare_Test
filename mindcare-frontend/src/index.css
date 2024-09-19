@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #121212; /* Background color for the app */
+  color: #ffffff; /* Text color for readability */
 }
 
 code {

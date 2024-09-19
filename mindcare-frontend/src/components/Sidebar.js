@@ -1,12 +1,30 @@
 import React from 'react';
+import { List, ListItem, ListItemText, Divider, Typography, Box } from '@mui/material';
+import ChatIcon from '@mui/icons-material/Chat';
 
-const Sidebar = () => {
+function Sidebar({ conversations = [], onSelectConversation }) {
   return (
-    <aside style={{ padding: '10px', backgroundColor: '#f8f9fa', height: '100vh' }}>
-      <h2>Conversations</h2>
-      <p>No conversations to display.</p>
-    </aside>
+    <Box p={2}>
+      <Typography variant="h6" gutterBottom>
+        Conversations
+      </Typography>
+      <Divider />
+      <List>
+        {conversations.length === 0 ? (
+          <ListItem>
+            <ListItemText primary="No conversations to display." />
+          </ListItem>
+        ) : (
+          conversations.map((conv) => (
+            <ListItem button key={conv.id} onClick={() => onSelectConversation(conv.id)}>
+              <ChatIcon sx={{ marginRight: 2 }} />
+              <ListItemText primary={conv.title} />
+            </ListItem>
+          ))
+        )}
+      </List>
+    </Box>
   );
-};
+}
 
 export default Sidebar;

@@ -1,0 +1,62 @@
+/* chat.css */
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* General Styling */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: #181818;
+  color: #d0d0d0;
+  font-family: 'Roboto Slab', serif;
+  overflow: hidden;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 64px; /* Adjust to your navbar's actual height */
+  z-index: 10;
+}
+
+.main-content {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  margin-top: 64px; /* Adjust to your navbar's height */
+}
+
+/* Sidebar Styling */
+.sidebar-container {
+  width: 20%;
+  background-color: #1E1E1E;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ChatBot container styling */
+.chatbot-container {
+  flex-grow: 1;
+  background-color: #1E1E1E; /* Changed to match navbar color */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

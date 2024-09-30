@@ -5,9 +5,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Divider,
   Typography,
   Box,
+  Button,
 } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 
@@ -17,10 +17,20 @@ const exampleConversations = [
     title: 'Session with MindCare - 01',
     lastMessage: 'How can I help you today?',
   },
-  // Add more example conversations as needed
+  {
+    id: 2,
+    title: 'Session with MindCare - 02',
+    lastMessage: 'Hey, can we chat?',
+  },
+  {
+    id: 3,
+    title: 'Session with MindCare - 03',
+    lastMessage: 'Im not feeling so well today',
+  }
+ 
 ];
 
-function Sidebar({ conversations = exampleConversations, onSelectConversation }) {
+function Sidebar({ conversations = exampleConversations, onSelectConversation, onNewConversation }) {
   return (
     <Box
       sx={{
@@ -31,18 +41,11 @@ function Sidebar({ conversations = exampleConversations, onSelectConversation })
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        position: 'relative', // Required for positioning the pseudo-element
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '2px', // Adjust the width of the border here
-          height: '100%',
-          background: 'linear-gradient(to bottom, #444444, #333333)', // Dark grey gradient
-        },
+        position: 'relative',
+        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)', // Add shadow for depth
       }}
     >
+      {/* Header */}
       <Typography
         variant="h6"
         sx={{
@@ -50,17 +53,20 @@ function Sidebar({ conversations = exampleConversations, onSelectConversation })
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 'bold',
           color: '#D3D3D3',
+          textAlign: 'center', // Center-align the title
+          borderBottom: '1px solid #333', // Separate with border
         }}
       >
         Conversations
       </Typography>
-      <Divider sx={{ backgroundColor: '#444' }} />
-      <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+
+      {/* Conversation List */}
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', padding: '8px 16px' }}>
         <List>
           {conversations.length === 0 ? (
             <ListItemText
               primary="No conversations to display."
-              sx={{ padding: '16px' }}
+              sx={{ padding: '16px', color: '#bbb' }}
             />
           ) : (
             conversations.map((conv) => (
@@ -69,7 +75,12 @@ function Sidebar({ conversations = exampleConversations, onSelectConversation })
                 onClick={() => onSelectConversation && onSelectConversation(conv.id)}
                 sx={{
                   color: '#fff',
-                  '&:hover': { backgroundColor: '#333' },
+                  padding: '10px 12px',
+                  marginBottom: '8px',
+                  borderRadius: '8px',
+                  backgroundColor: '#292929',
+                  '&:hover': { backgroundColor: '#333' }, // Hover effect
+                  transition: 'background-color 0.3s ease', // Smooth transition
                 }}
               >
                 <ListItemIcon sx={{ color: '#D3D3D3', minWidth: '40px' }}>
@@ -78,13 +89,47 @@ function Sidebar({ conversations = exampleConversations, onSelectConversation })
                 <ListItemText
                   primary={conv.title}
                   secondary={conv.lastMessage}
-                  primaryTypographyProps={{ color: '#fff' }}
-                  secondaryTypographyProps={{ color: '#bbb' }}
+                  primaryTypographyProps={{
+                    color: '#fff',
+                    fontWeight: 'bold',
+                  }}
+                  secondaryTypographyProps={{
+                    color: '#bbb',
+                    fontSize: '0.85rem',
+                  }}
                 />
               </ListItemButton>
             ))
           )}
         </List>
+      </Box>
+
+      {/* Start a New Conversation Button */}
+      <Box
+        sx={{
+          padding: '16px',
+          textAlign: 'center',
+          backgroundColor: '#1E1E1E',
+        }}
+      >
+        <Button
+          variant="contained"
+          onClick={onNewConversation} // Add your new conversation logic here
+          sx={{
+            backgroundColor: '#424242', // Light grey for the button
+            color: '#fff', // White text inside the button
+            borderRadius: '20px',
+            padding: '10px 20px',
+            fontFamily: "'Roboto Slab', serif",
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#555555', // Darker grey on hover
+            },
+            transition: 'background-color 0.3s ease', // Smooth transition
+          }}
+        >
+          Start a New Conversation
+        </Button>
       </Box>
     </Box>
   );

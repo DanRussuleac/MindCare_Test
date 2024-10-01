@@ -9,12 +9,14 @@ import {
   Typography,
   Avatar,
   Chip,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MoodIcon from '@mui/icons-material/Mood';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-// Removed DOMPurify import
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -23,48 +25,65 @@ function ChatBot() {
   const [conversation, setConversation] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [typing, setTyping] = useState(false); // Indicates if the bot is typing
+  const [typing, setTyping] = useState(false);
+
+  const [voices, setVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [currentMessage, setCurrentMessage] = useState('');
 
   const chatEndRef = useRef(null);
 
-  // Predefined preprompts
   const preprompts = [
-    "Hello!",
-    "How are you?",
+    'Hello!',
+    'How are you?',
     "I want to talk.",
     "Something's been on my mind.",
-    "Can we chat?",
+    'Can we chat?',
   ];
 
-  // Custom scroll to bottom function with speed control
+  // List of random names to assign to voices
+  const voiceNames = ['Alex', 'Suzan', 'Taylor', 'Riley', 'Casey', 'Jordan'];
+
+  // Fetch available voices and assign random names
+  useEffect(() => {
+    const synth = window.speechSynthesis;
+
+    const loadVoices = () => {
+      let availableVoices = synth.getVoices();
+      if (availableVoices.length !== 0) {
+        const englishVoices = availableVoices.filter((voice) =>
+          voice.lang.startsWith('en')
+        );
+
+        // Limit to six voices
+        const limitedVoices = englishVoices.slice(0, 6);
+
+        // Map voices to random names
+        const voicesWithNames = limitedVoices.map((voice, index) => ({
+          voice,
+          name: voiceNames[index] || `Voice ${index + 1}`,
+        }));
+
+        setVoices(voicesWithNames);
+
+        // Set default voice
+        setSelectedVoice(voicesWithNames[0]);
+      }
+    };
+
+    if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = loadVoices;
+    }
+
+    loadVoices();
+  }, []);
+
+  // Scroll to bottom when conversation updates
   const scrollToBottom = () => {
     const chatContainer = chatEndRef.current?.parentNode;
     if (chatContainer) {
-      const targetScroll = chatContainer.scrollHeight;
-      const currentScroll = chatContainer.scrollTop;
-      const distance = targetScroll - currentScroll;
-      
-      if (distance === 0) return;  // If already at the bottom, no need to scroll
-
-      const duration = 500; // Total duration of the scroll in ms (adjust to make slower)
-      const step = distance / (duration / 16);  // Calculate how much to scroll every 16ms (~1 frame at 60fps)
-
-      let currentTime = 0;
-
-      const scrollStep = () => {
-        currentTime += 16;  // Each step is ~16ms
-        const progress = currentTime / duration;
-        
-        chatContainer.scrollTop = currentScroll + (distance * progress);
-
-        if (progress < 1) {
-          requestAnimationFrame(scrollStep);  // Keep scrolling until we reach the target
-        } else {
-          chatContainer.scrollTop = targetScroll;  // Make sure we end up exactly at the bottom
-        }
-      };
-
-      requestAnimationFrame(scrollStep);  // Start the scrolling process
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   };
 
@@ -78,7 +97,7 @@ function ChatBot() {
       try {
         setError(null);
         setIsLoading(true);
-        setTyping(true); // Show typing indicator
+        setTyping(true);
 
         // Add user message to conversation
         const userMsg = {
@@ -111,7 +130,7 @@ function ChatBot() {
         setError('An error occurred. Please try again.');
       } finally {
         setIsLoading(false);
-        setTyping(false); // Hide typing indicator
+        setTyping(false);
       }
     }
   };
@@ -129,6 +148,32 @@ function ChatBot() {
     sendMessage(prompt);
   };
 
+  // Function to handle text-to-speech
+  const handleSpeak = (text, voiceWithName = selectedVoice) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Stop any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = voiceWithName.voice;
+      utterance.lang = voiceWithName.voice.lang;
+      utterance.pitch = 1; // Adjust pitch for a soothing tone
+      utterance.rate = 0.9; // Slightly slower rate for clarity
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert('Sorry, your browser does not support speech synthesis.');
+    }
+  };
+
+  // Handle opening the voice selection menu
+  const handleClick = (event, text) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentMessage(text);
+  };
+
+  // Handle closing the voice selection menu
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Box
       sx={{
@@ -137,7 +182,7 @@ function ChatBot() {
         flexGrow: 1,
         backgroundColor: '#1E1E1E',
         color: '#fff',
-        height: '100%', // Ensure it fills the parent container
+        height: '100%',
       }}
     >
       {/* Chat messages area */}
@@ -153,17 +198,20 @@ function ChatBot() {
             key={index}
             sx={{
               display: 'flex',
-              justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+              justifyContent:
+                msg.role === 'user' ? 'flex-end' : 'flex-start',
               mb: 2,
               flexDirection: 'column',
-              alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
+              alignItems:
+                msg.role === 'user' ? 'flex-end' : 'flex-start',
             }}
           >
             {/* Avatar and Message */}
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: msg.role === 'user' ? 'row-reverse' : 'row',
+                flexDirection:
+                  msg.role === 'user' ? 'row-reverse' : 'row',
                 alignItems: 'flex-end',
               }}
             >
@@ -171,29 +219,35 @@ function ChatBot() {
               <Avatar
                 src={
                   msg.role === 'user'
-                    ? '/images/user-avatar.png' // Replace with actual path or URL
-                    : '/images/bot-avatar.png' // Replace with actual path or URL
+                    ? '/images/user-avatar.png'
+                    : '/images/bot-avatar.png'
                 }
                 alt={`${msg.role} avatar`}
                 sx={{
                   width: 32,
                   height: 32,
-                  margin: msg.role === 'user' ? '0 0 0 10px' : '0 10px 0 0',
+                  margin:
+                    msg.role === 'user'
+                      ? '0 0 0 10px'
+                      : '0 10px 0 0',
                 }}
               />
 
               {/* Message Bubble */}
               <Box
                 sx={{
-                  backgroundColor: msg.role === 'user' ? '#4CAF50' : '#424242',
+                  backgroundColor:
+                    msg.role === 'user' ? '#4CAF50' : '#424242',
                   color: '#fff',
                   borderRadius:
                     msg.role === 'user'
                       ? '20px 20px 0px 20px'
                       : '20px 20px 20px 0px',
-                  padding: '8px 12px', // Reduced padding for smaller bubbles
-                  maxWidth: '60%', // Reduced maxWidth for smaller bubbles
+                  padding: '8px 12px',
+                  maxWidth: '80%', // Increased from '60%'
+                  minWidth: '50px', // Added minWidth
                   wordWrap: 'break-word',
+                  wordBreak: 'break-word', // Added wordBreak
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                   '& ul, & ol': {
                     margin: 0,
@@ -211,9 +265,7 @@ function ChatBot() {
                 }}
               >
                 {msg.role === 'bot' ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                  >
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
                     {msg.content}
                   </ReactMarkdown>
                 ) : (
@@ -221,6 +273,38 @@ function ChatBot() {
                 )}
               </Box>
             </Box>
+
+            {/* Speaker Button with Voice Selection */}
+            {msg.role === 'bot' && (
+              <div>
+                <IconButton
+                  onClick={(event) => handleClick(event, msg.content)}
+                  sx={{ color: '#fff', mt: 1 }}
+                  aria-label="listen to message"
+                >
+                  <VolumeUpIcon />
+                </IconButton>
+
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  {voices.map((voiceWithName, index) => (
+                    <MenuItem
+                      key={index}
+                      onClick={() => {
+                        setSelectedVoice(voiceWithName);
+                        handleSpeak(currentMessage, voiceWithName);
+                        handleClose();
+                      }}
+                    >
+                      {voiceWithName.name}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>
+            )}
 
             {/* Timestamp */}
             <Typography
@@ -230,7 +314,7 @@ function ChatBot() {
                 mt: 0.5,
                 ml: msg.role === 'user' ? 'auto' : '0',
                 mr: msg.role === 'user' ? '0' : 'auto',
-                fontSize: '0.75rem', // Smaller font size for timestamp
+                fontSize: '0.75rem',
               }}
             >
               {msg.timestamp}
@@ -259,7 +343,7 @@ function ChatBot() {
             >
               {/* Bot Avatar */}
               <Avatar
-                src="/images/bot-avatar.png" // Replace with actual path or URL
+                src="/images/bot-avatar.png"
                 alt="bot avatar"
                 sx={{
                   width: 32,
@@ -275,8 +359,10 @@ function ChatBot() {
                   color: '#fff',
                   borderRadius: '20px 20px 20px 0px',
                   padding: '8px 12px',
-                  maxWidth: '60%',
+                  maxWidth: '80%', // Match the message bubble maxWidth
+                  minWidth: '50px', // Added minWidth for consistency
                   wordWrap: 'break-word',
+                  wordBreak: 'break-word', // Added wordBreak
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                   display: 'flex',
                   alignItems: 'center',
@@ -306,7 +392,7 @@ function ChatBot() {
           gap: '10px',
           flexWrap: 'wrap',
           justifyContent: 'center',
-          backgroundColor: '1e1e1e', // Updated to #181818 as per your request
+          backgroundColor: '#1E1E1E',
         }}
       >
         {preprompts.map((prompt, index) => (
@@ -316,10 +402,10 @@ function ChatBot() {
             onClick={() => handlePrepromptClick(prompt)}
             clickable
             sx={{
-              backgroundColor: '#424242', // Dark grey bubble
-              color: '#FFFFFF', // White text
+              backgroundColor: '#424242',
+              color: '#FFFFFF',
               '&:hover': {
-                backgroundColor: '#555555', // Slightly lighter on hover
+                backgroundColor: '#555555',
               },
             }}
           />

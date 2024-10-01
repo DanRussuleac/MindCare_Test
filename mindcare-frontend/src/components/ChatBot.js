@@ -30,7 +30,12 @@ function ChatBot() {
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [currentMessage, setCurrentMessage] = useState('');
+
+  const [autoReadEnabled, setAutoReadEnabled] = useState(false);
+  const [messageToRead, setMessageToRead] = useState(null);
+  const [lastSpokenMessageId, setLastSpokenMessageId] = useState(null); // New state variable
+
+  const utteranceRef = useRef(null); // Ref to store the utterance
 
   const chatEndRef = useRef(null);
 
@@ -66,9 +71,6 @@ function ChatBot() {
         }));
 
         setVoices(voicesWithNames);
-
-        // Set default voice
-        setSelectedVoice(voicesWithNames[0]);
       }
     };
 
@@ -80,16 +82,27 @@ function ChatBot() {
   }, []);
 
   // Scroll to bottom when conversation updates
+  useEffect(() => {
+    scrollToBottom();
+
+    if (autoReadEnabled && conversation.length > 0) {
+      const lastMessage = conversation[conversation.length - 1];
+      if (
+        lastMessage.role === 'bot' &&
+        lastMessage.id !== lastSpokenMessageId
+      ) {
+        handleSpeak(lastMessage.content);
+        setLastSpokenMessageId(lastMessage.id);
+      }
+    }
+  }, [conversation]);
+
   const scrollToBottom = () => {
     const chatContainer = chatEndRef.current?.parentNode;
     if (chatContainer) {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [conversation]);
 
   // Function to send a message
   const sendMessage = async (userMessage = message) => {
@@ -101,6 +114,7 @@ function ChatBot() {
 
         // Add user message to conversation
         const userMsg = {
+          id: Date.now(), // Unique ID
           role: 'user',
           content: userMessage,
           timestamp: new Date().toLocaleTimeString(),
@@ -120,6 +134,7 @@ function ChatBot() {
 
         // Add bot's response to conversation
         const botMsg = {
+          id: Date.now() + 1, // Ensure unique ID
           role: 'bot',
           content: botResponse,
           timestamp: new Date().toLocaleTimeString(),
@@ -149,29 +164,65 @@ function ChatBot() {
   };
 
   // Function to handle text-to-speech
-  const handleSpeak = (text, voiceWithName = selectedVoice) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // Stop any ongoing speech
+  const handleSpeak = (text) => {
+    if ('speechSynthesis' in window && selectedVoice) {
+      // Cancel any ongoing speech
+      if (utteranceRef.current) {
+        window.speechSynthesis.cancel();
+      }
+
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = voiceWithName.voice;
-      utterance.lang = voiceWithName.voice.lang;
+      utterance.voice = selectedVoice.voice;
+      utterance.lang = selectedVoice.voice.lang;
       utterance.pitch = 1; // Adjust pitch for a soothing tone
       utterance.rate = 0.9; // Slightly slower rate for clarity
+
+      // Store the utterance in the ref to prevent garbage collection
+      utteranceRef.current = utterance;
+
+      // Clean up the ref when speech ends
+      utterance.onend = () => {
+        utteranceRef.current = null;
+      };
+
       window.speechSynthesis.speak(utterance);
-    } else {
-      alert('Sorry, your browser does not support speech synthesis.');
     }
   };
 
-  // Handle opening the voice selection menu
-  const handleClick = (event, text) => {
-    setAnchorEl(event.currentTarget);
-    setCurrentMessage(text);
+  // Handle speaker button click
+  const handleSpeakerClick = (event, messageContent) => {
+    if (!autoReadEnabled) {
+      // If auto-read is not enabled, open voice selection menu
+      setAnchorEl(event.currentTarget);
+      setMessageToRead(messageContent); // Store the message to read
+    } else {
+      // If auto-read is enabled, turn it off
+      setAutoReadEnabled(false);
+      // Cancel any ongoing speech
+      if (utteranceRef.current) {
+        window.speechSynthesis.cancel();
+        utteranceRef.current = null;
+      }
+    }
+  };
+
+  // Handle voice selection
+  const handleVoiceSelect = (voiceWithName) => {
+    setSelectedVoice(voiceWithName);
+    setAutoReadEnabled(true);
+    setAnchorEl(null);
+
+    // Read the message that was clicked
+    if (messageToRead) {
+      handleSpeak(messageToRead);
+      setMessageToRead(null); // Reset after reading
+    }
   };
 
   // Handle closing the voice selection menu
   const handleClose = () => {
     setAnchorEl(null);
+    setMessageToRead(null); // Reset if menu is closed without selection
   };
 
   return (
@@ -195,7 +246,7 @@ function ChatBot() {
       >
         {conversation.map((msg, index) => (
           <Box
-            key={index}
+            key={msg.id} // Use unique ID as key
             sx={{
               display: 'flex',
               justifyContent:
@@ -227,9 +278,7 @@ function ChatBot() {
                   width: 32,
                   height: 32,
                   margin:
-                    msg.role === 'user'
-                      ? '0 0 0 10px'
-                      : '0 10px 0 0',
+                    msg.role === 'user' ? '0 0 0 10px' : '0 10px 0 0',
                 }}
               />
 
@@ -244,10 +293,10 @@ function ChatBot() {
                       ? '20px 20px 0px 20px'
                       : '20px 20px 20px 0px',
                   padding: '8px 12px',
-                  maxWidth: '80%', // Increased from '60%'
-                  minWidth: '50px', // Added minWidth
+                  maxWidth: '80%',
+                  minWidth: '50px',
                   wordWrap: 'break-word',
-                  wordBreak: 'break-word', // Added wordBreak
+                  wordBreak: 'break-word',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                   '& ul, & ol': {
                     margin: 0,
@@ -274,37 +323,37 @@ function ChatBot() {
               </Box>
             </Box>
 
-            {/* Speaker Button with Voice Selection */}
+            {/* Speaker Button */}
             {msg.role === 'bot' && (
-              <div>
-                <IconButton
-                  onClick={(event) => handleClick(event, msg.content)}
-                  sx={{ color: '#fff', mt: 1 }}
-                  aria-label="listen to message"
-                >
-                  <VolumeUpIcon />
-                </IconButton>
-
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  {voices.map((voiceWithName, index) => (
-                    <MenuItem
-                      key={index}
-                      onClick={() => {
-                        setSelectedVoice(voiceWithName);
-                        handleSpeak(currentMessage, voiceWithName);
-                        handleClose();
-                      }}
-                    >
-                      {voiceWithName.name}
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </div>
+              <IconButton
+                onClick={(event) =>
+                  handleSpeakerClick(event, msg.content)
+                }
+                sx={{
+                  color: autoReadEnabled ? '#4CAF50' : '#fff',
+                  mt: 1,
+                }}
+                aria-label="toggle auto-read"
+              >
+                <VolumeUpIcon />
+              </IconButton>
             )}
+
+            {/* Voice Selection Menu */}
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              {voices.map((voiceWithName, index) => (
+                <MenuItem
+                  key={index}
+                  onClick={() => handleVoiceSelect(voiceWithName)}
+                >
+                  {voiceWithName.name}
+                </MenuItem>
+              ))}
+            </Menu>
 
             {/* Timestamp */}
             <Typography
@@ -360,9 +409,9 @@ function ChatBot() {
                   borderRadius: '20px 20px 20px 0px',
                   padding: '8px 12px',
                   maxWidth: '80%', // Match the message bubble maxWidth
-                  minWidth: '50px', // Added minWidth for consistency
+                  minWidth: '50px',
                   wordWrap: 'break-word',
-                  wordBreak: 'break-word', // Added wordBreak
+                  wordBreak: 'break-word',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                   display: 'flex',
                   alignItems: 'center',

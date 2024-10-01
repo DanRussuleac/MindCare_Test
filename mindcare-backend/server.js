@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 import fs from 'fs';  // Import the file system module
+// Removed import of 'marked'
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -58,18 +59,21 @@ app.post('/api/bot', async (req, res) => {
     });
 
     // Extract and send back the response from the API
-    const botResponse = completion.choices[0].message.content;
+    let botResponse = completion.choices[0].message.content;
+
+    // Removed conversion to HTML using `marked`
+    // botResponse = marked(botResponse);
 
     // Log the user message and AI response
     logMessageToFile(message, botResponse);
 
+    // Send the raw Markdown response
     res.json({ botResponse });
 
   } catch (error) {
-    // Log more detailed error information
+    // Error handling remains the same
     console.error('Error communicating with the AI API:', error);
 
-    // Retry the request if it's a network issue (e.g., ECONNRESET)
     if (error.code === 'ECONNRESET') {
       console.log('Connection was reset. Retrying...');
       setTimeout(() => {
@@ -78,7 +82,6 @@ app.post('/api/bot', async (req, res) => {
         });
       }, 5000); // Retry after 5 seconds
     } else {
-      // Send other types of errors back to the client
       res.status(500).json({
         error: 'Internal server error',
         details: error.message || 'Unknown error occurred',

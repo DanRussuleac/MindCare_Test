@@ -128,7 +128,7 @@ function Sidebar({ conversations = exampleConversations, onSelectConversation, o
             transition: 'background-color 0.3s ease', // Smooth transition
           }}
         >
-          Start a New Conversation
+          New Conversation
         </Button>
       </Box>
     </Box>

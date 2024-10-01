@@ -1,4 +1,3 @@
-// ChatBot.js
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
@@ -15,6 +14,9 @@ import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MoodIcon from '@mui/icons-material/Mood';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+// Removed DOMPurify import
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 function ChatBot() {
   const [message, setMessage] = useState('');
@@ -22,8 +24,6 @@ function ChatBot() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [typing, setTyping] = useState(false); // Indicates if the bot is typing
-  const [botMessage, setBotMessage] = useState(''); // Holds the bot's full message
-  const [displayedBotMessage, setDisplayedBotMessage] = useState(''); // Portion of the bot's message displayed
 
   const chatEndRef = useRef(null);
 
@@ -33,47 +33,44 @@ function ChatBot() {
     "How are you?",
     "I want to talk.",
     "Something's been on my mind.",
-    "Can we chat?"
+    "Can we chat?",
   ];
 
-  // Scroll to the bottom whenever the conversation or displayedBotMessage updates
+  // Custom scroll to bottom function with speed control
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const chatContainer = chatEndRef.current?.parentNode;
+    if (chatContainer) {
+      const targetScroll = chatContainer.scrollHeight;
+      const currentScroll = chatContainer.scrollTop;
+      const distance = targetScroll - currentScroll;
+      
+      if (distance === 0) return;  // If already at the bottom, no need to scroll
+
+      const duration = 500; // Total duration of the scroll in ms (adjust to make slower)
+      const step = distance / (duration / 16);  // Calculate how much to scroll every 16ms (~1 frame at 60fps)
+
+      let currentTime = 0;
+
+      const scrollStep = () => {
+        currentTime += 16;  // Each step is ~16ms
+        const progress = currentTime / duration;
+        
+        chatContainer.scrollTop = currentScroll + (distance * progress);
+
+        if (progress < 1) {
+          requestAnimationFrame(scrollStep);  // Keep scrolling until we reach the target
+        } else {
+          chatContainer.scrollTop = targetScroll;  // Make sure we end up exactly at the bottom
+        }
+      };
+
+      requestAnimationFrame(scrollStep);  // Start the scrolling process
+    }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversation, displayedBotMessage]);
-
-  // useEffect to handle the typewriter effect
-  useEffect(() => {
-    let typingInterval;
-
-    if (typing && botMessage) {
-      typingInterval = setInterval(() => {
-        setDisplayedBotMessage((prev) => {
-          const nextChar = botMessage.charAt(prev.length);
-          if (nextChar) {
-            return prev + nextChar;
-          } else {
-            clearInterval(typingInterval);
-            setTyping(false);
-            // Add the fully typed bot message to the conversation
-            const fullBotMessage = {
-              role: 'bot',
-              content: botMessage,
-              timestamp: new Date().toLocaleTimeString(),
-            };
-            setConversation((prevConvo) => [...prevConvo, fullBotMessage]);
-            setBotMessage('');
-            return prev;
-          }
-        });
-      }, 30); // Adjust typing speed here (milliseconds per character)
-    }
-
-    return () => clearInterval(typingInterval);
-  }, [typing, botMessage]);
+  }, [conversation]);
 
   // Function to send a message
   const sendMessage = async (userMessage = message) => {
@@ -81,6 +78,7 @@ function ChatBot() {
       try {
         setError(null);
         setIsLoading(true);
+        setTyping(true); // Show typing indicator
 
         // Add user message to conversation
         const userMsg = {
@@ -101,15 +99,19 @@ function ChatBot() {
         });
         const botResponse = result.data.botResponse;
 
-        // Initiate typing indicator and set botMessage
-        setTyping(true);
-        setBotMessage(botResponse);
-        setDisplayedBotMessage('');
+        // Add bot's response to conversation
+        const botMsg = {
+          role: 'bot',
+          content: botResponse,
+          timestamp: new Date().toLocaleTimeString(),
+        };
+        setConversation((prev) => [...prev, botMsg]);
       } catch (error) {
         console.error('Error sending message:', error);
         setError('An error occurred. Please try again.');
       } finally {
         setIsLoading(false);
+        setTyping(false); // Hide typing indicator
       }
     }
   };
@@ -169,8 +171,8 @@ function ChatBot() {
               <Avatar
                 src={
                   msg.role === 'user'
-                    ? '/path-to-user-avatar.png' // Replace with actual path or URL
-                    : '/path-to-bot-avatar.png' // Replace with actual path or URL
+                    ? '/images/user-avatar.png' // Replace with actual path or URL
+                    : '/images/bot-avatar.png' // Replace with actual path or URL
                 }
                 alt={`${msg.role} avatar`}
                 sx={{
@@ -193,9 +195,30 @@ function ChatBot() {
                   maxWidth: '60%', // Reduced maxWidth for smaller bubbles
                   wordWrap: 'break-word',
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                  '& ul, & ol': {
+                    margin: 0,
+                    paddingLeft: '20px',
+                  },
+                  '& li': {
+                    marginBottom: '4px',
+                  },
+                  '& strong': {
+                    fontWeight: 'bold',
+                  },
+                  '& p': {
+                    margin: 0,
+                  },
                 }}
               >
-                {msg.content}
+                {msg.role === 'bot' ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                ) : (
+                  msg.content
+                )}
               </Box>
             </Box>
 
@@ -236,7 +259,7 @@ function ChatBot() {
             >
               {/* Bot Avatar */}
               <Avatar
-                src="/path-to-bot-avatar.png" // Replace with actual path or URL
+                src="/images/bot-avatar.png" // Replace with actual path or URL
                 alt="bot avatar"
                 sx={{
                   width: 32,

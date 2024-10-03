@@ -1257,3 +1257,9 @@ AI: Hello. It's nice to meet you. Is there something I can help you with or woul
 User: How are you?
 AI: I'm functioning properly and ready to assist you with any questions or tasks you may have. I'm a highly advanced language model, so I don't have feelings or emotions like humans do, but I'm here to provide you with accurate and helpful information 24/7. How can I assist you today?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: How are you?
+AI: I'm functioning properly and ready to assist you. I don't have emotions like humans do, so I don't have feelings like happiness or sadness. I'm simply here to provide information and help with any questions you may have. How can I assist you today?
+

@@ -1,3 +1,4 @@
+// src/components/ChatBot.js
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
@@ -6,7 +7,6 @@ import {
   IconButton,
   CircularProgress,
   InputAdornment,
-  Typography,
   Avatar,
   Chip,
   Menu,
@@ -19,6 +19,10 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
+// Import the avatar images
+import userAvatar from '../images/user.png';
+import aiAvatar from '../images/ai.png';
 
 function ChatBot() {
   const [message, setMessage] = useState('');
@@ -33,9 +37,9 @@ function ChatBot() {
 
   const [autoReadEnabled, setAutoReadEnabled] = useState(false);
   const [messageToRead, setMessageToRead] = useState(null);
-  const [lastSpokenMessageId, setLastSpokenMessageId] = useState(null); // New state variable
+  const [lastSpokenMessageId, setLastSpokenMessageId] = useState(null);
 
-  const utteranceRef = useRef(null); // Ref to store the utterance
+  const utteranceRef = useRef(null);
 
   const chatEndRef = useRef(null);
 
@@ -117,7 +121,6 @@ function ChatBot() {
           id: Date.now(), // Unique ID
           role: 'user',
           content: userMessage,
-          timestamp: new Date().toLocaleTimeString(),
         };
         setConversation((prev) => [...prev, userMsg]);
 
@@ -137,7 +140,6 @@ function ChatBot() {
           id: Date.now() + 1, // Ensure unique ID
           role: 'bot',
           content: botResponse,
-          timestamp: new Date().toLocaleTimeString(),
         };
         setConversation((prev) => [...prev, botMsg]);
       } catch (error) {
@@ -244,7 +246,7 @@ function ChatBot() {
           padding: '16px',
         }}
       >
-        {conversation.map((msg, index) => (
+        {conversation.map((msg) => (
           <Box
             key={msg.id} // Use unique ID as key
             sx={{
@@ -268,17 +270,14 @@ function ChatBot() {
             >
               {/* Avatar */}
               <Avatar
-                src={
-                  msg.role === 'user'
-                    ? '/images/user-avatar.png'
-                    : '/images/bot-avatar.png'
-                }
+                src={msg.role === 'user' ? userAvatar : aiAvatar}
                 alt={`${msg.role} avatar`}
                 sx={{
                   width: 32,
                   height: 32,
                   margin:
                     msg.role === 'user' ? '0 0 0 10px' : '0 10px 0 0',
+                  backgroundColor: '#FFFFFF',
                 }}
               />
 
@@ -354,20 +353,6 @@ function ChatBot() {
                 </MenuItem>
               ))}
             </Menu>
-
-            {/* Timestamp */}
-            <Typography
-              variant="caption"
-              sx={{
-                color: '#bbb',
-                mt: 0.5,
-                ml: msg.role === 'user' ? 'auto' : '0',
-                mr: msg.role === 'user' ? '0' : 'auto',
-                fontSize: '0.75rem',
-              }}
-            >
-              {msg.timestamp}
-            </Typography>
           </Box>
         ))}
 
@@ -392,12 +377,13 @@ function ChatBot() {
             >
               {/* Bot Avatar */}
               <Avatar
-                src="/images/bot-avatar.png"
+                src={aiAvatar}
                 alt="bot avatar"
                 sx={{
                   width: 32,
                   height: 32,
                   margin: '0 10px 0 0',
+                  backgroundColor: '#FFFFFF',
                 }}
               />
 
@@ -408,7 +394,7 @@ function ChatBot() {
                   color: '#fff',
                   borderRadius: '20px 20px 20px 0px',
                   padding: '8px 12px',
-                  maxWidth: '80%', // Match the message bubble maxWidth
+                  maxWidth: '80%',
                   minWidth: '50px',
                   wordWrap: 'break-word',
                   wordBreak: 'break-word',
@@ -482,46 +468,58 @@ function ChatBot() {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: '#333',
-          padding: '10px 16px',
-          borderTop: '1px solid #444',
+          justifyContent: 'center', // Center horizontally
+          padding: '4px', // Reduced padding to decrease height
+          backgroundColor: '#1E1E1E',
+          marginBottom: '10px',
         }}
       >
-        {/* Rounded container for input elements */}
+        {/* Input field and send button */}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
             backgroundColor: '#424242',
-            borderRadius: '20px',
-            flexGrow: 1,
-            padding: '5px 10px',
+            borderRadius: '16px', // Slightly smaller border radius
+            width: '70%', // Set width to 70% of the container
+            padding: '0 4px', // Reduced padding
           }}
         >
-          {/* Attach File Icon */}
-          <IconButton sx={{ color: '#9E9E9E' }} aria-label="attach file">
-            <AttachFileIcon />
-          </IconButton>
-
           {/* Message Input */}
           <TextField
-            variant="standard"
+            fullWidth
+            label="Type here"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type a message..."
             onKeyPress={handleKeyPress}
             disabled={isLoading}
-            fullWidth
+            variant="filled"
             InputProps={{
               disableUnderline: true,
-              style: { color: '#fff' },
+              style: {
+                color: '#fff',
+                fontSize: '0.8rem', // Smaller font size
+                paddingTop: '4px',
+                paddingBottom: '4px',
+              },
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton sx={{ color: '#9E9E9E' }} aria-label="add emoji">
-                    <MoodIcon />
+                  {/* Emoji Icon */}
+                  <IconButton
+                    sx={{ color: '#9E9E9E', padding: '2px' }} // Reduced padding
+                    aria-label="add emoji"
+                  >
+                    <MoodIcon fontSize="small" />
                   </IconButton>
                 </InputAdornment>
               ),
+            }}
+            InputLabelProps={{
+              style: { color: '#9E9E9E', fontSize: '0.8rem' }, // Smaller font size
+            }}
+            sx={{
+              flexGrow: 1,
+              mr: 1,
             }}
           />
 
@@ -529,10 +527,17 @@ function ChatBot() {
           <IconButton
             onClick={() => sendMessage()}
             disabled={isLoading}
-            sx={{ color: '#4CAF50', marginLeft: '5px' }}
+            sx={{
+              color: '#4CAF50',
+              padding: '6px', // Reduced padding
+            }}
             aria-label="send message"
           >
-            {isLoading ? <CircularProgress size={24} /> : <SendIcon />}
+            {isLoading ? (
+              <CircularProgress size={18} />
+            ) : (
+              <SendIcon fontSize="small" />
+            )}
           </IconButton>
         </Box>
       </Box>

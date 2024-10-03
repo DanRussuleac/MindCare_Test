@@ -1,37 +1,129 @@
+// RegisterForm.js
 import React, { useState } from 'react';
+import {
+  Box,
+  TextField,
+  Button,
+  FormHelperText,
+} from '@mui/material';
 
 const RegisterForm = ({ onSubmit }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [credentials, setCredentials] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const temp = {};
+    temp.username = credentials.username
+      ? ''
+      : 'Username is required.';
+    temp.email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(
+      credentials.email
+    )
+      ? ''
+      : 'Email is not valid.';
+    temp.password = credentials.password
+      ? ''
+      : 'Password is required.';
+    temp.confirmPassword =
+      credentials.confirmPassword === credentials.password
+        ? ''
+        : 'Passwords do not match.';
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === '');
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials({
+      ...credentials,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ username, password, email });
+    if (validate()) {
+      onSubmit(credentials);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ mt: 1, width: '100%' }}
+    >
+      <TextField
+        margin="normal"
+        fullWidth
+        label="Username"
+        name="username"
+        value={credentials.username}
+        onChange={handleChange}
+        error={!!errors.username}
+        helperText={errors.username}
       />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+
+      <TextField
+        margin="normal"
+        fullWidth
+        label="Email"
+        name="email"
+        value={credentials.email}
+        onChange={handleChange}
+        error={!!errors.email}
+        helperText={errors.email}
       />
-      <input
+
+      <TextField
+        margin="normal"
+        fullWidth
+        label="Password"
         type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
+        value={credentials.password}
+        onChange={handleChange}
+        error={!!errors.password}
+        helperText={errors.password}
       />
-      <button type="submit">Register</button>
-    </form>
+
+      <TextField
+        margin="normal"
+        fullWidth
+        label="Confirm Password"
+        type="password"
+        name="confirmPassword"
+        value={credentials.confirmPassword}
+        onChange={handleChange}
+        error={!!errors.confirmPassword}
+        helperText={errors.confirmPassword}
+      />
+
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        sx={{
+          mt: 3,
+          mb: 2,
+          bgcolor: 'grey.500',
+          color: 'white',
+          '&:hover': { bgcolor: 'grey.700' },
+        }}
+      >
+        Register
+      </Button>
+
+      <FormHelperText error>
+        {errors.general}
+      </FormHelperText>
+    </Box>
   );
 };
 

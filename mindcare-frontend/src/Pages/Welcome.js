@@ -5,15 +5,13 @@ import { Box, Typography, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { Link as RouterLink } from 'react-router-dom';
 import * as THREE from 'three';
-import NET from 'vanta/dist/vanta.net.min.js'; // Importing the NET effect from Vanta.js
+import CLOUDS from 'vanta/dist/vanta.clouds.min'; // Correct import for Vanta.CLOUDS
 import '../styles/Welcome.css'; // Import the CSS file
 
 // Styled components
 const HeroSection = styled(Box)(({ theme }) => ({
   height: '100vh',
   width: '100%',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -46,17 +44,24 @@ function Welcome() {
 
   useEffect(() => {
     if (!vantaEffect.current) {
-      vantaEffect.current = NET({
+      vantaEffect.current = CLOUDS({
         el: vantaRef.current,
         THREE: THREE, // Pass the THREE.js instance
-        backgroundColor: 0x1e1e1e, // Dark grey background
-        color: 0xb0bec5, // Light grey lines
-        points: 12.0, // Number of points
-        maxDistance: 20.0, // Maximum distance between points
-        spacing: 20.0, // Spacing between points
-        showLines: true, // Show connecting lines
-        showDots: false, // Show dots
-        // Additional options can be added here
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.0,
+        minWidth: 200.0,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        skyColor: 0x000000, // Black sky (#000000)
+        cloudColor: 0xa8a8a8, // Black clouds (#000000)
+        cloudShadowColor: 0xa8a8a8, // Black cloud shadows (#000000)
+        sunColor: 0x000000, // Black sun (#000000)
+        sunGlareColor: 0xffffff, // Grey sun glare (#666666)
+        sunlightColor: 0xffffff, // Grey sunlight (#898989)
+        texturePath: '../images/noise.png', // Path to your custom texture in the public folder
+        speed: 1.5, // Animation speed
       });
     }
     // Cleanup function to destroy the effect when the component unmounts
@@ -68,8 +73,8 @@ function Welcome() {
   }, []); // Empty dependency array ensures this runs once on mount
 
   return (
-    <HeroSection ref={vantaRef}>
-      <Overlay />
+    <HeroSection ref={vantaRef} id="your-element-selector">
+      <Overlay className="overlay" />
       <Content className="hero-content">
         <Typography variant="h2" component="h1" gutterBottom className="fade-in">
           Welcome to MindCare

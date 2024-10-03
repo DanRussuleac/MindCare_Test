@@ -54,7 +54,7 @@ app.post('/api/bot', async (req, res) => {
         { role: 'user', content: message }
       ],
       temperature: 0.7,
-      max_tokens: 256,
+      max_tokens: 1024,
       timeout: 10000, // 10 seconds timeout
     });
 

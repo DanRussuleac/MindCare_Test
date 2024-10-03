@@ -1,0 +1,53 @@
+/* AuthPage.css */
+.cube-container {
+    perspective: 800px;
+  }
+  
+  .cube {
+    position: relative;
+    width: 150px;
+    transform-style: preserve-3d;
+    animation: rotate-cube 10s infinite linear;
+  }
+  
+  .cube .side {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .cube .front {
+    transform: rotateY(0deg) translateZ(75px);
+  }
+  
+  .cube .back {
+    transform: rotateY(180deg) translateZ(75px);
+  }
+  
+  .cube .right {
+    transform: rotateY(90deg) translateZ(75px);
+  }
+  
+  .cube .left {
+    transform: rotateY(-90deg) translateZ(75px);
+  }
+  
+  .cube .top {
+    transform: rotateX(90deg) translateZ(75px);
+  }
+  
+  .cube .bottom {
+    transform: rotateX(-90deg) translateZ(75px);
+  }
+  
+  @keyframes rotate-cube {
+    from {
+      transform: rotateX(0deg) rotateY(0deg);
+    }
+    to {
+      transform: rotateX(-360deg) rotateY(-360deg);
+    }
+  }
+  

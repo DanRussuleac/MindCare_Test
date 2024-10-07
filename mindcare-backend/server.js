@@ -3,12 +3,13 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
-import fs from 'fs';  // Import the file system module
-// Removed import of 'marked'
+import fs from 'fs';
+import authRoutes from './auth.js'; 
 
 // Load environment variables from the .env file
 dotenv.config();
 
+// Initialize Express app
 const app = express();
 
 // Middleware setup
@@ -34,53 +35,40 @@ app.get('/', (req, res) => {
 app.post('/api/bot', async (req, res) => {
   const { message } = req.body;
 
-  // Check if message is provided
   if (!message) {
     return res.status(400).json({ error: 'No message provided' });
   }
 
   try {
-    // Initialize OpenAI with API key and AIMLAPI base URL
     const api = new OpenAI({
-      apiKey: process.env.API_KEY,  // Ensure your .env file has a correct API key
-      baseURL: "https://api.aimlapi.com/v1",  // AIMLAPI endpoint
+      apiKey: process.env.API_KEY,
+      baseURL: "https://api.aimlapi.com/v1",
     });
 
-    // Set a retry mechanism and timeout
     const completion = await api.chat.completions.create({
-      model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',  // Updated model
+      model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
       messages: [
         { role: 'system', content: 'You are an AI assistant who knows everything.' },
         { role: 'user', content: message }
       ],
       temperature: 0.7,
       max_tokens: 1024,
-      timeout: 10000, // 10 seconds timeout
+      timeout: 10000,
     });
 
-    // Extract and send back the response from the API
-    let botResponse = completion.choices[0].message.content;
+    const botResponse = completion.choices[0].message.content;
 
-    // Removed conversion to HTML using `marked`
-    // botResponse = marked(botResponse);
-
-    // Log the user message and AI response
     logMessageToFile(message, botResponse);
 
-    // Send the raw Markdown response
     res.json({ botResponse });
 
   } catch (error) {
-    // Error handling remains the same
     console.error('Error communicating with the AI API:', error);
 
     if (error.code === 'ECONNRESET') {
-      console.log('Connection was reset. Retrying...');
       setTimeout(() => {
-        res.status(500).json({
-          error: 'Connection error, please try again.',
-        });
-      }, 5000); // Retry after 5 seconds
+        res.status(500).json({ error: 'Connection error, please try again.' });
+      }, 5000);
     } else {
       res.status(500).json({
         error: 'Internal server error',
@@ -89,6 +77,9 @@ app.post('/api/bot', async (req, res) => {
     }
   }
 });
+
+// Add the auth routes to handle login/register functionality
+app.use('/api/auth', authRoutes);
 
 // Start the backend server
 const PORT = process.env.PORT || 5000;

@@ -1,4 +1,3 @@
-// Navbar.js
 import React, { useState } from 'react';
 import {
   AppBar,
@@ -12,7 +11,7 @@ import {
   Tooltip,
   Divider,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import useNavigate
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -22,6 +21,7 @@ import userAvatar from '../images/user.png';
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate(); // Use navigate to programmatically navigate
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -32,9 +32,17 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    console.log('Logged out');
-    // Implement your logout functionality here
+    // Remove the token from localStorage
+    localStorage.removeItem('token');
+    
+    // Log the successful logout
+    console.log('Successfully logged out');
+    
+    // Close the menu
     handleCloseUserMenu();
+
+    // Redirect the user to the login page
+    navigate('/login');
   };
 
   const handleSettings = () => {

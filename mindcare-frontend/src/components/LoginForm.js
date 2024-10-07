@@ -1,5 +1,6 @@
-// LoginForm.js
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import {
   Box,
   TextField,
@@ -7,22 +8,19 @@ import {
   FormHelperText,
 } from '@mui/material';
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = () => {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: '',
   });
 
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate(); // Use navigate for redirecting
 
   const validate = () => {
     const temp = {};
-    temp.username = credentials.username
-      ? ''
-      : 'Username is required.';
-    temp.password = credentials.password
-      ? ''
-      : 'Password is required.';
+    temp.email = credentials.email ? '' : 'Email is required.';
+    temp.password = credentials.password ? '' : 'Password is required.';
     setErrors(temp);
     return Object.values(temp).every((x) => x === '');
   };
@@ -35,10 +33,24 @@ const LoginForm = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit(credentials);
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/login', credentials);
+        const { token } = response.data;
+
+        // Save token in localStorage
+        localStorage.setItem('token', token);
+
+        // Redirect to the /chat route
+        navigate('/chat');
+
+        console.log('Login successful!');
+      } catch (error) {
+        console.error('Login failed:', error.response.data);
+        setErrors({ general: 'Invalid credentials. Please try again.' });
+      }
     }
   };
 
@@ -51,12 +63,12 @@ const LoginForm = ({ onSubmit }) => {
       <TextField
         margin="normal"
         fullWidth
-        label="Username"
-        name="username"
-        value={credentials.username}
+        label="Email"
+        name="email"
+        value={credentials.email}
         onChange={handleChange}
-        error={!!errors.username}
-        helperText={errors.username}
+        error={!!errors.email}
+        helperText={errors.email}
       />
 
       <TextField
@@ -86,9 +98,7 @@ const LoginForm = ({ onSubmit }) => {
         Sign In
       </Button>
 
-      <FormHelperText error>
-        {errors.general}
-      </FormHelperText>
+      <FormHelperText error>{errors.general}</FormHelperText>
     </Box>
   );
 };

@@ -49,19 +49,19 @@ function Welcome() {
         THREE: THREE, // Pass the THREE.js instance
         mouseControls: true,
         touchControls: true,
-        gyroControls: false,
+        gyroControls: true,
         minHeight: 200.0,
         minWidth: 200.0,
         scale: 1.0,
         scaleMobile: 1.0,
-        skyColor: 0x000000, // Black sky (#000000)
-        cloudColor: 0xa8a8a8, // Black clouds (#000000)
-        cloudShadowColor: 0xa8a8a8, // Black cloud shadows (#000000)
-        sunColor: 0x000000, // Black sun (#000000)
-        sunGlareColor: 0xffffff, // Grey sun glare (#666666)
-        sunlightColor: 0xffffff, // Grey sunlight (#898989)
-        texturePath: '../images/noise.png', // Path to your custom texture in the public folder
-        speed: 1.5, // Animation speed
+        skyColor: 0x000000, 
+        cloudColor: 0xa8a8a8, 
+        cloudShadowColor: 0xa8a8a8, 
+        sunColor: 0x000000, 
+        sunGlareColor: 0xffffff, 
+        sunlightColor: 0xffffff, 
+        texturePath: '../images/noise.png', 
+        speed: 1.5, 
       });
     }
     // Cleanup function to destroy the effect when the component unmounts

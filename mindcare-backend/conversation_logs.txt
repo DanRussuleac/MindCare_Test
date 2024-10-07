@@ -1263,3 +1263,33 @@ AI: Hello. It's nice to meet you. Is there something I can help you with or woul
 User: How are you?
 AI: I'm functioning properly and ready to assist you. I don't have emotions like humans do, so I don't have feelings like happiness or sadness. I'm simply here to provide information and help with any questions you may have. How can I assist you today?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Hello!
+AI: Hello. It's nice to meet you. I'm here to help with any questions or topics you'd like to discuss. Whether it's science, history, entertainment, or anything else, I'm ready to provide information and insights. What's on your mind?
+
+User: Im feeling sad
+AI: I'm here to listen and help if I can. It takes a lot of courage to acknowledge and share your feelings, so thank you for trusting me with yours.
+
+Would you like to talk about what's causing your sadness, or would you prefer some general words of comfort and support? Sometimes talking about it can help you process your emotions, but other times it's just nice to have someone to listen and offer a virtual hug.
+
+If you're not ready to talk about it, that's okay too. We can focus on some calming and uplifting activities, like imagining a peaceful place, practicing deep breathing exercises, or exploring some fun distractions to take your mind off things.
+
+What do you think might help you feel a little better right now?
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Can we chat?
+AI: I'd love to chat with you. I'm here to help answer any questions, provide information on a wide range of topics, or just engage in a conversation. What's on your mind? Would you like to discuss something specific or just see where the conversation goes?
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Hello!
+AI: Hello. It's nice to meet you. I can assist you with any questions or topics you'd like to discuss, from science and history to entertainment and culture. What would you like to talk about?
+
+User: Can we chat?
+AI: I'd love to chat with you. How's your day going so far? Is there something on your mind that you'd like to talk about, or do you want to explore a particular topic? I'm all ears... or rather, all text.
+

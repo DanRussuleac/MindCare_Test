@@ -1,8 +1,13 @@
+// auth.js
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool } from './db.js';
 import express from 'express';
 const router = express.Router();
+import verifyToken from './middleware/auth.js';
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Register user
 router.post('/register', async (req, res) => {
@@ -33,7 +38,7 @@ router.post('/register', async (req, res) => {
     console.log('User successfully registered!');
     res.json(newUser.rows[0]);
   } catch (err) {
-    console.error(err.message);
+    console.error('Error registering user:', err.message);
     res.status(500).send('Server error');
   }
 });
@@ -43,21 +48,43 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (user.rows.length === 0) {
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (userResult.rows.length === 0) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.rows[0].password);
+    const user = userResult.rows[0];
+
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.rows[0].id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     console.log('User successfully logged in!');
     res.json({ token });
   } catch (err) {
-    console.error(err.message);
+    console.error('Error logging in user:', err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// Get current user info (protected route)
+router.get('/user', verifyToken, async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    // Fetch the user's data from the database
+    const userResult = await pool.query('SELECT username FROM users WHERE id = $1', [userId]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    // Send the username to the client
+    res.json({ username: userResult.rows[0].username });
+  } catch (err) {
+    console.error('Error fetching user info:', err.message);
     res.status(500).send('Server error');
   }
 });

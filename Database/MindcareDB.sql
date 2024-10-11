@@ -1,8 +1,18 @@
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Create conversations table
+CREATE TABLE conversations (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create messages table
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    sender VARCHAR(50) NOT NULL, -- 'user' or 'bot'
+    content TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT NOW()
 );
 

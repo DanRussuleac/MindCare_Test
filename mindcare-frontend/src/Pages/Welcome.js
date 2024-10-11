@@ -87,7 +87,7 @@ function Welcome() {
           color="secondary"
           size="large"
           component={RouterLink}
-          to="/login" // Update this route to your login/register screen
+          to="/login" 
           className="fade-in-button"
         >
           Start Your Journey

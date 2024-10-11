@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// src/components/Navbar.js
+
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -11,17 +13,37 @@ import {
   Tooltip,
   Divider,
 } from '@mui/material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
-
-// Import your user avatar image
 import userAvatar from '../images/user.png';
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [username, setUsername] = useState(''); // State to hold username
   const navigate = useNavigate(); // Use navigate to programmatically navigate
+
+  useEffect(() => {
+    // Fetch the username when the component mounts
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await fetch('http://localhost:5000/api/auth/user', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          setUsername(data.username);
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -34,10 +56,10 @@ function Navbar() {
   const handleLogout = () => {
     // Remove the token from localStorage
     localStorage.removeItem('token');
-    
+
     // Log the successful logout
     console.log('Successfully logged out');
-    
+
     // Close the menu
     handleCloseUserMenu();
 
@@ -47,7 +69,6 @@ function Navbar() {
 
   const handleSettings = () => {
     console.log('Settings clicked');
-    // Implement your settings functionality here
     handleCloseUserMenu();
   };
 
@@ -61,42 +82,55 @@ function Navbar() {
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Toolbar sx={{ display: 'flex', alignItems: 'center' }}>
         {/* Left Side - Home Icon as Link */}
-        <IconButton
-          component={RouterLink}
-          to="/"
-          edge="start"
-          color="inherit"
-          aria-label="home"
-        >
-          <HomeIcon sx={{ fontSize: '1.5rem', color: '#FFFFFF' }} />
-        </IconButton>
+        <Box sx={{ flex: 1 }}>
+          <IconButton
+            component={RouterLink}
+            to="/home"
+            edge="start"
+            color="inherit"
+            aria-label="home"
+          >
+            <HomeIcon sx={{ fontSize: '1.5rem', color: '#FFFFFF' }} />
+          </IconButton>
+        </Box>
 
         {/* Center - Title */}
-        <Typography
-          variant="h5"
-          component="div"
-          sx={{
-            fontFamily: "'Roboto Slab', serif",
-            color: '#FFFFFF',
-            fontWeight: 'bold',
-            flexGrow: 1,
-            textAlign: 'center',
-          }}
-        >
-          MindCare
-        </Typography>
+        <Box sx={{ flex: 1, textAlign: 'center' }}>
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{
+              fontFamily: "'Roboto Slab', serif",
+              color: '#FFFFFF',
+              fontWeight: 'bold',
+            }}
+          >
+            MindCare
+          </Typography>
+        </Box>
 
-        {/* Right Side - User Profile */}
-        <Box sx={{ flexGrow: 0 }}>
+        {/* Right Side - Username and User Profile */}
+        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          {/* Display Username next to Avatar */}
+          <Typography
+            sx={{
+              color: '#FFFFFF',
+              marginRight: '10px',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+            }}
+          >
+            {username || 'Loading...'}
+          </Typography>
           <Tooltip title="Open Menu">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
                 sx={{
-                  width: 32, // Reduced size from 40 to 32
+                  width: 32,
                   height: 32,
-                  backgroundColor: '#FFFFFF', // Set background color to white
+                  backgroundColor: '#FFFFFF',
                 }}
                 src={userAvatar}
                 alt="User Avatar"
@@ -123,6 +157,7 @@ function Navbar() {
               component={RouterLink}
               to="/journal"
               onClick={handleCloseUserMenu}
+              sx={{ color: '#FFFFFF' }}
             >
               Journal
             </MenuItem>
@@ -130,6 +165,7 @@ function Navbar() {
               component={RouterLink}
               to="/dailytasks"
               onClick={handleCloseUserMenu}
+              sx={{ color: '#FFFFFF' }}
             >
               Daily Tasks
             </MenuItem>
@@ -137,15 +173,16 @@ function Navbar() {
               component={RouterLink}
               to="/moodrange"
               onClick={handleCloseUserMenu}
+              sx={{ color: '#FFFFFF' }}
             >
               Mood Range
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleSettings}>
+            <MenuItem onClick={handleSettings} sx={{ color: '#FFFFFF' }}>
               <SettingsIcon sx={{ mr: 1 }} />
               Settings
             </MenuItem>
-            <MenuItem onClick={handleLogout}>
+            <MenuItem onClick={handleLogout} sx={{ color: '#FFFFFF' }}>
               <LogoutIcon sx={{ mr: 1 }} />
               Logout
             </MenuItem>

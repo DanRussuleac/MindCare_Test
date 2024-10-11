@@ -1,10 +1,14 @@
+// server.js
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 import fs from 'fs';
-import authRoutes from './auth.js'; 
+import authRoutes from './auth.js';
+import conversationRoutes from './conversations.js'; // Import conversation routes
+import { pool } from './db.js'; // Import the database pool
+import verifyToken from './middleware/auth.js'; // Import the auth middleware
 
 // Load environment variables from the .env file
 dotenv.config();
@@ -31,25 +35,49 @@ app.get('/', (req, res) => {
   res.send('Hello from the Node.js backend!');
 });
 
-// Main route to handle AI chatbot interaction
-app.post('/api/bot', async (req, res) => {
+// Add the auth routes to handle login/register functionality
+app.use('/api/auth', authRoutes);
+
+// Add the conversation routes (must come after auth routes)
+app.use('/api/conversations', verifyToken, conversationRoutes);
+
+// Modified route to handle AI chatbot interaction with conversation ID
+app.post('/api/bot/:conversationId/send', verifyToken, async (req, res) => {
   const { message } = req.body;
+  const { conversationId } = req.params;
+  const userId = req.userId;
 
   if (!message) {
     return res.status(400).json({ error: 'No message provided' });
   }
 
   try {
+    // Verify that the conversation belongs to the user
+    const convoCheck = await pool.query(
+      'SELECT * FROM conversations WHERE id = $1 AND user_id = $2',
+      [conversationId, userId]
+    );
+    if (convoCheck.rows.length === 0) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    // Save user's message to the database
+    await pool.query(
+      'INSERT INTO messages (conversation_id, sender, content) VALUES ($1, $2, $3)',
+      [conversationId, 'user', message]
+    );
+
+    // Call your existing AI model
     const api = new OpenAI({
       apiKey: process.env.API_KEY,
-      baseURL: "https://api.aimlapi.com/v1",
+      baseURL: 'https://api.aimlapi.com/v1',
     });
 
     const completion = await api.chat.completions.create({
       model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
       messages: [
         { role: 'system', content: 'You are an AI assistant who knows everything.' },
-        { role: 'user', content: message }
+        { role: 'user', content: message },
       ],
       temperature: 0.7,
       max_tokens: 1024,
@@ -58,10 +86,22 @@ app.post('/api/bot', async (req, res) => {
 
     const botResponse = completion.choices[0].message.content;
 
+    // Save bot's response to the database
+    await pool.query(
+      'INSERT INTO messages (conversation_id, sender, content) VALUES ($1, $2, $3)',
+      [conversationId, 'bot', botResponse]
+    );
+
+    // Update the conversation's updated_at timestamp
+    await pool.query(
+      'UPDATE conversations SET updated_at = NOW() WHERE id = $1',
+      [conversationId]
+    );
+
+    // Optionally log messages to file
     logMessageToFile(message, botResponse);
 
     res.json({ botResponse });
-
   } catch (error) {
     console.error('Error communicating with the AI API:', error);
 
@@ -77,9 +117,6 @@ app.post('/api/bot', async (req, res) => {
     }
   }
 });
-
-// Add the auth routes to handle login/register functionality
-app.use('/api/auth', authRoutes);
 
 // Start the backend server
 const PORT = process.env.PORT || 5000;

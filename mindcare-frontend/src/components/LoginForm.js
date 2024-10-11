@@ -43,8 +43,8 @@ const LoginForm = () => {
         // Save token in localStorage
         localStorage.setItem('token', token);
 
-        // Redirect to the /chat route
-        navigate('/chat');
+        // Redirect to the /home route
+        navigate('/home');
 
         console.log('Login successful!');
       } catch (error) {

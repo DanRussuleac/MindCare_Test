@@ -11,12 +11,24 @@ import {
   Chip,
   Menu,
   MenuItem,
+  Typography,
+  List,
+  ListItemButton,
+  ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText, // Added for dialog content text
+  DialogActions,
+  Button,
+  Tooltip, // Added for tooltips
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MoodIcon from '@mui/icons-material/Mood';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import ChatIcon from '@mui/icons-material/Chat';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -27,6 +39,8 @@ import aiAvatar from '../images/ai.png';
 function ChatBot() {
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversationId, setSelectedConversationId] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [typing, setTyping] = useState(false);
@@ -53,6 +67,36 @@ function ChatBot() {
 
   // List of random names to assign to voices
   const voiceNames = ['Alex', 'Suzan', 'Taylor', 'Riley', 'Casey', 'Jordan'];
+
+  const [username, setUsername] = useState(''); // State to hold username
+
+  // Dialog state for creating a new conversation
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newConversationTitle, setNewConversationTitle] = useState('');
+
+  // Dialog state for confirming deletion
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState(null);
+
+  // Fetch the username when the component mounts
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await axios.get('http://localhost:5000/api/auth/user', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setUsername(response.data.username);
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   // Fetch available voices and assign random names
   useEffect(() => {
@@ -85,6 +129,66 @@ function ChatBot() {
     loadVoices();
   }, []);
 
+  // Fetch user's conversations
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found, user might not be logged in.');
+          setConversations([]);
+          return;
+        }
+        const response = await axios.get('http://localhost:5000/api/conversations', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setConversations(response.data);
+
+        // If no conversations exist, prompt to create one
+        if (response.data.length === 0) {
+          setIsDialogOpen(true); // Open dialog to create a conversation
+        } else {
+          // Select the first conversation by default
+          if (!selectedConversationId) {
+            setSelectedConversationId(response.data[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching conversations:', error);
+        setConversations([]); // Ensure conversations is set even on error
+      }
+    };
+    fetchConversations();
+  }, []);
+
+  // Fetch messages when selectedConversationId changes
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (selectedConversationId) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(
+            `http://localhost:5000/api/conversations/${selectedConversationId}/messages`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setConversation(response.data);
+        } catch (error) {
+          console.error('Error fetching messages:', error);
+          setConversation([]); // Ensure conversation is set even on error
+        }
+      } else {
+        setConversation([]);
+      }
+    };
+    fetchMessages();
+  }, [selectedConversationId]);
+
   // Scroll to bottom when conversation updates
   useEffect(() => {
     scrollToBottom();
@@ -92,7 +196,7 @@ function ChatBot() {
     if (autoReadEnabled && conversation.length > 0) {
       const lastMessage = conversation[conversation.length - 1];
       if (
-        lastMessage.role === 'bot' &&
+        lastMessage.sender === 'bot' &&
         lastMessage.id !== lastSpokenMessageId
       ) {
         handleSpeak(lastMessage.content);
@@ -116,10 +220,10 @@ function ChatBot() {
         setIsLoading(true);
         setTyping(true);
 
-        // Add user message to conversation
+        // Add user message to conversation locally
         const userMsg = {
           id: Date.now(), // Unique ID
-          role: 'user',
+          sender: 'user',
           content: userMessage,
         };
         setConversation((prev) => [...prev, userMsg]);
@@ -129,16 +233,24 @@ function ChatBot() {
           setMessage('');
         }
 
+        const token = localStorage.getItem('token');
+
         // Send message to backend
-        const result = await axios.post('http://localhost:5000/api/bot', {
-          message: userMessage,
-        });
+        const result = await axios.post(
+          `http://localhost:5000/api/bot/${selectedConversationId}/send`,
+          { message: userMessage },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const botResponse = result.data.botResponse;
 
-        // Add bot's response to conversation
+        // Add bot's response to conversation locally
         const botMsg = {
           id: Date.now() + 1, // Ensure unique ID
-          role: 'bot',
+          sender: 'bot',
           content: botResponse,
         };
         setConversation((prev) => [...prev, botMsg]);
@@ -227,331 +339,589 @@ function ChatBot() {
     setMessageToRead(null); // Reset if menu is closed without selection
   };
 
+  // Handle selecting a conversation
+  const handleSelectConversation = (conversationId) => {
+    setSelectedConversationId(conversationId);
+  };
+
+  // Handle starting a new conversation
+  const handleNewConversation = () => {
+    setIsDialogOpen(true); // Open the dialog to enter conversation title
+  };
+
+  // Handle creating a new conversation after entering the title
+  const handleCreateConversation = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        'http://localhost:5000/api/conversations',
+        { title: newConversationTitle },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const newConversation = response.data;
+      setConversations((prev) => [newConversation, ...prev]);
+      setSelectedConversationId(newConversation.id);
+      setNewConversationTitle('');
+      setIsDialogOpen(false);
+
+      // Add welcome message from the bot
+      const welcomeMessage = {
+        id: Date.now(), // Unique ID
+        sender: 'bot',
+        content: `Welcome, ${username}! How can I assist you today?`,
+      };
+      setConversation([welcomeMessage]);
+
+      // Optionally, save the welcome message to the backend
+      await axios.post(
+        `http://localhost:5000/api/conversations/${newConversation.id}/messages`,
+        welcomeMessage,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error('Error creating new conversation:', error);
+    }
+  };
+
+  // Handle deleting a conversation (updated to open confirmation dialog)
+  const handleDeleteConversation = (conversationId) => {
+    setConversationToDelete(conversationId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  // Confirm deletion of a conversation
+  const confirmDeleteConversation = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/conversations/${conversationToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Remove the deleted conversation from the list
+      setConversations((prev) => prev.filter((conv) => conv.id !== conversationToDelete));
+      // If the deleted conversation was selected, clear it
+      if (selectedConversationId === conversationToDelete) {
+        setSelectedConversationId(null);
+        setConversation([]);
+      }
+      setIsDeleteDialogOpen(false);
+      setConversationToDelete(null);
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      setIsDeleteDialogOpen(false);
+      setConversationToDelete(null);
+    }
+  };
+
+  // Cancel deletion of a conversation
+  const cancelDeleteConversation = () => {
+    setIsDeleteDialogOpen(false);
+    setConversationToDelete(null);
+  };
+
   return (
     <Box
       sx={{
+        height: 'calc(100vh - 64px)', // Adjust for navbar height if necessary
         display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1,
-        backgroundColor: '#1E1E1E',
-        color: '#fff',
-        height: '100%',
       }}
     >
-      {/* Chat messages area */}
+      {/* Sidebar */}
       <Box
         sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          padding: '16px',
-        }}
-      >
-        {conversation.map((msg) => (
-          <Box
-            key={msg.id} // Use unique ID as key
-            sx={{
-              display: 'flex',
-              justifyContent:
-                msg.role === 'user' ? 'flex-end' : 'flex-start',
-              mb: 2,
-              flexDirection: 'column',
-              alignItems:
-                msg.role === 'user' ? 'flex-end' : 'flex-start',
-            }}
-          >
-            {/* Avatar and Message */}
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection:
-                  msg.role === 'user' ? 'row-reverse' : 'row',
-                alignItems: 'flex-end',
-              }}
-            >
-              {/* Avatar */}
-              <Avatar
-                src={msg.role === 'user' ? userAvatar : aiAvatar}
-                alt={`${msg.role} avatar`}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  margin:
-                    msg.role === 'user' ? '0 0 0 10px' : '0 10px 0 0',
-                  backgroundColor: '#FFFFFF',
-                }}
-              />
-
-              {/* Message Bubble */}
-              <Box
-                sx={{
-                  backgroundColor:
-                    msg.role === 'user' ? '#4CAF50' : '#424242',
-                  color: '#fff',
-                  borderRadius:
-                    msg.role === 'user'
-                      ? '20px 20px 0px 20px'
-                      : '20px 20px 20px 0px',
-                  padding: '8px 12px',
-                  maxWidth: '80%',
-                  minWidth: '50px',
-                  wordWrap: 'break-word',
-                  wordBreak: 'break-word',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                  '& ul, & ol': {
-                    margin: 0,
-                    paddingLeft: '20px',
-                  },
-                  '& li': {
-                    marginBottom: '4px',
-                  },
-                  '& strong': {
-                    fontWeight: 'bold',
-                  },
-                  '& p': {
-                    margin: 0,
-                  },
-                }}
-              >
-                {msg.role === 'bot' ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {msg.content}
-                  </ReactMarkdown>
-                ) : (
-                  msg.content
-                )}
-              </Box>
-            </Box>
-
-            {/* Speaker Button */}
-            {msg.role === 'bot' && (
-              <IconButton
-                onClick={(event) =>
-                  handleSpeakerClick(event, msg.content)
-                }
-                sx={{
-                  color: autoReadEnabled ? '#4CAF50' : '#fff',
-                  mt: 1,
-                }}
-                aria-label="toggle auto-read"
-              >
-                <VolumeUpIcon />
-              </IconButton>
-            )}
-
-            {/* Voice Selection Menu */}
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              {voices.map((voiceWithName, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={() => handleVoiceSelect(voiceWithName)}
-                >
-                  {voiceWithName.name}
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        ))}
-
-        {/* Typing Indicator */}
-        {typing && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              mb: 2,
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-            }}
-          >
-            {/* Avatar and Typing Animation */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}
-            >
-              {/* Bot Avatar */}
-              <Avatar
-                src={aiAvatar}
-                alt="bot avatar"
-                sx={{
-                  width: 32,
-                  height: 32,
-                  margin: '0 10px 0 0',
-                  backgroundColor: '#FFFFFF',
-                }}
-              />
-
-              {/* Typing Animation */}
-              <Box
-                sx={{
-                  backgroundColor: '#424242',
-                  color: '#fff',
-                  borderRadius: '20px 20px 20px 0px',
-                  padding: '8px 12px',
-                  maxWidth: '80%',
-                  minWidth: '50px',
-                  wordWrap: 'break-word',
-                  wordBreak: 'break-word',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <MoreHorizIcon
-                  sx={{
-                    animation: 'blink 1.4s infinite both',
-                    color: '#bbb',
-                  }}
-                />
-              </Box>
-            </Box>
-          </Box>
-        )}
-
-        {/* Reference to scroll to bottom */}
-        <div ref={chatEndRef} />
-      </Box>
-
-      {/* Preprompts Section */}
-      <Box
-        sx={{
-          padding: '16px',
-          display: 'flex',
-          gap: '10px',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
+          width: '300px',
+          flexShrink: 0, // Prevent the sidebar from shrinking
           backgroundColor: '#1E1E1E',
+          color: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          position: 'relative',
+          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)', // Add shadow for depth
         }}
       >
-        {preprompts.map((prompt, index) => (
-          <Chip
-            key={index}
-            label={prompt}
-            onClick={() => handlePrepromptClick(prompt)}
-            clickable
+        {/* Header */}
+        <Typography
+          variant="h6"
+          sx={{
+            padding: '16px',
+            fontFamily: "'Roboto Slab', serif",
+            fontWeight: 'bold',
+            color: '#D3D3D3',
+            textAlign: 'center', // Center-align the title
+            borderBottom: '1px solid #333', // Separate with border
+          }}
+        >
+          Conversations
+        </Typography>
+
+        {/* Conversation List */}
+        <Box sx={{ flexGrow: 1, overflowY: 'auto', padding: '8px 16px' }}>
+          <List>
+            {conversations.length === 0 ? (
+              <Typography sx={{ padding: '16px', color: '#bbb' }}>
+                No conversations to display.
+              </Typography>
+            ) : (
+              conversations.map((conv) => (
+                <ListItemButton
+                  key={conv.id}
+                  onClick={() => handleSelectConversation(conv.id)}
+                  sx={{
+                    color: '#fff',
+                    padding: '10px 12px',
+                    marginBottom: '8px',
+                    borderRadius: '8px',
+                    backgroundColor: '#292929',
+                    '&:hover': { backgroundColor: '#333' }, // Hover effect
+                    transition: 'background-color 0.3s ease', // Smooth transition
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <ChatIcon sx={{ color: '#D3D3D3', marginRight: '10px' }} />
+                    <ListItemText
+                      primary={conv.title}
+                      primaryTypographyProps={{
+                        color: '#fff',
+                        fontWeight: 'bold',
+                      }}
+                    />
+                  </Box>
+                  <Tooltip title="Delete Conversation" arrow>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering onSelectConversation
+                        handleDeleteConversation(conv.id);
+                      }}
+                      sx={{ color: '#D3D3D3' }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </ListItemButton>
+              ))
+            )}
+          </List>
+        </Box>
+
+        {/* Start a New Conversation Button */}
+        <Box
+          sx={{
+            padding: '16px',
+            textAlign: 'center',
+            backgroundColor: '#1E1E1E',
+          }}
+        >
+          <Button
+            variant="contained"
+            onClick={handleNewConversation}
             sx={{
               backgroundColor: '#424242',
-              color: '#FFFFFF',
+              color: '#fff',
+              borderRadius: '20px',
+              padding: '10px 20px',
+              fontFamily: "'Roboto Slab', serif",
+              fontWeight: 'bold',
               '&:hover': {
                 backgroundColor: '#555555',
               },
+              transition: 'background-color 0.3s ease',
             }}
-          />
-        ))}
+          >
+            New Conversation
+          </Button>
+        </Box>
       </Box>
 
-      {/* Error Message */}
-      {error && (
-        <Box
-          sx={{
-            backgroundColor: '#FFCDD2',
-            color: '#D32F2F',
-            padding: '10px',
-            borderRadius: '5px',
-            margin: '0 16px 10px 16px',
-            textAlign: 'center',
-          }}
-        >
-          {error}
-        </Box>
-      )}
-
-      {/* Input area */}
+      {/* Chat Area */}
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center', // Center horizontally
-          padding: '4px', // Reduced padding to decrease height
+          flexDirection: 'column',
+          flexGrow: 1,
           backgroundColor: '#1E1E1E',
-          marginBottom: '10px',
+          color: '#fff',
+          height: '100%',
+          overflow: 'hidden', // Ensure content doesn't overflow
         }}
       >
-        {/* Input field and send button */}
+        {/* Chat messages area */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            padding: '16px',
+          }}
+        >
+          {conversation.map((msg) => (
+            <Box
+              key={msg.id} // Use unique ID as key
+              sx={{
+                display: 'flex',
+                justifyContent:
+                  msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                mb: 2,
+                flexDirection: 'column',
+                alignItems:
+                  msg.sender === 'user' ? 'flex-end' : 'flex-start',
+              }}
+            >
+              {/* Avatar and Message */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection:
+                    msg.sender === 'user' ? 'row-reverse' : 'row',
+                  alignItems: 'flex-end',
+                  maxWidth: '100%', // Ensure the message row doesn't exceed the container
+                }}
+              >
+                {/* Avatar */}
+                <Avatar
+                  src={msg.sender === 'user' ? userAvatar : aiAvatar}
+                  alt={`${msg.sender} avatar`}
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    margin:
+                      msg.sender === 'user' ? '0 0 0 10px' : '0 10px 0 0',
+                    backgroundColor: '#FFFFFF',
+                  }}
+                />
+
+                {/* Message Bubble */}
+                <Box
+                  sx={{
+                    backgroundColor:
+                      msg.sender === 'user' ? '#4CAF50' : '#424242',
+                    color: '#fff',
+                    borderRadius:
+                      msg.sender === 'user'
+                        ? '20px 20px 0px 20px'
+                        : '20px 20px 20px 0px',
+                    padding: '8px 12px',
+                    maxWidth: '70%', // Limit the width to 70% of the chat area
+                    wordWrap: 'break-word',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word', // Ensure long words break to the next line
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                    '& ul, & ol': {
+                      margin: 0,
+                      paddingLeft: '20px',
+                    },
+                    '& li': {
+                      marginBottom: '4px',
+                    },
+                    '& strong': {
+                      fontWeight: 'bold',
+                    },
+                    '& p': {
+                      margin: 0,
+                    },
+                  }}
+                >
+                  {msg.sender === 'bot' ? (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
+                </Box>
+              </Box>
+
+              {/* Speaker Button */}
+              {msg.sender === 'bot' && (
+                <IconButton
+                  onClick={(event) =>
+                    handleSpeakerClick(event, msg.content)
+                  }
+                  sx={{
+                    color: autoReadEnabled ? '#4CAF50' : '#fff',
+                    mt: 1,
+                  }}
+                  aria-label="toggle auto-read"
+                >
+                  <VolumeUpIcon />
+                </IconButton>
+              )}
+
+              {/* Voice Selection Menu */}
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                {voices.map((voiceWithName, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => handleVoiceSelect(voiceWithName)}
+                  >
+                    {voiceWithName.name}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          ))}
+
+          {/* Typing Indicator */}
+          {typing && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                mb: 2,
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}
+            >
+              {/* Avatar and Typing Animation */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                }}
+              >
+                {/* Bot Avatar */}
+                <Avatar
+                  src={aiAvatar}
+                  alt="bot avatar"
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    margin: '0 10px 0 0',
+                    backgroundColor: '#FFFFFF',
+                  }}
+                />
+
+                {/* Typing Animation */}
+                <Box
+                  sx={{
+                    backgroundColor: '#424242',
+                    color: '#fff',
+                    borderRadius: '20px 20px 20px 0px',
+                    padding: '8px 12px',
+                    maxWidth: '70%', // Ensure consistency with message bubbles
+                    wordWrap: 'break-word',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <MoreHorizIcon
+                    sx={{
+                      animation: 'blink 1.4s infinite both',
+                      color: '#bbb',
+                    }}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          )}
+
+          {/* Reference to scroll to bottom */}
+          <div ref={chatEndRef} />
+        </Box>
+
+        {/* Preprompts Section */}
+        <Box
+          sx={{
+            padding: '16px',
+            display: 'flex',
+            gap: '10px',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            backgroundColor: '#1E1E1E',
+          }}
+        >
+          {preprompts.map((prompt, index) => (
+            <Chip
+              key={index}
+              label={prompt}
+              onClick={() => handlePrepromptClick(prompt)}
+              clickable
+              sx={{
+                backgroundColor: '#424242',
+                color: '#FFFFFF',
+                '&:hover': {
+                  backgroundColor: '#555555',
+                },
+              }}
+            />
+          ))}
+        </Box>
+
+        {/* Error Message */}
+        {error && (
+          <Box
+            sx={{
+              backgroundColor: '#FFCDD2',
+              color: '#D32F2F',
+              padding: '10px',
+              borderRadius: '5px',
+              margin: '0 16px 10px 16px',
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </Box>
+        )}
+
+        {/* Input area */}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#424242',
-            borderRadius: '16px', // Slightly smaller border radius
-            width: '70%', // Set width to 70% of the container
-            padding: '0 4px', // Reduced padding
+            justifyContent: 'center', // Center horizontally
+            padding: '4px', // Reduced padding to decrease height
+            backgroundColor: '#1E1E1E',
+            marginBottom: '10px',
           }}
         >
-          {/* Message Input */}
-          <TextField
-            fullWidth
-            label="Type here"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading}
-            variant="filled"
-            InputProps={{
-              disableUnderline: true,
-              style: {
-                color: '#fff',
-                fontSize: '0.8rem', // Smaller font size
-                paddingTop: '4px',
-                paddingBottom: '4px',
-              },
-              endAdornment: (
-                <InputAdornment position="end">
-                  {/* Emoji Icon */}
-                  <IconButton
-                    sx={{ color: '#9E9E9E', padding: '2px' }} // Reduced padding
-                    aria-label="add emoji"
-                  >
-                    <MoodIcon fontSize="small" />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            InputLabelProps={{
-              style: { color: '#9E9E9E', fontSize: '0.8rem' }, // Smaller font size
-            }}
+          {/* Input field and send button */}
+          <Box
             sx={{
-              flexGrow: 1,
-              mr: 1,
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#424242',
+              borderRadius: '16px', // Slightly smaller border radius
+              width: '70%', // Set width to 70% of the container
+              padding: '0 4px', // Reduced padding
             }}
-          />
-
-          {/* Send Button */}
-          <IconButton
-            onClick={() => sendMessage()}
-            disabled={isLoading}
-            sx={{
-              color: '#4CAF50',
-              padding: '6px', // Reduced padding
-            }}
-            aria-label="send message"
           >
-            {isLoading ? (
-              <CircularProgress size={18} />
-            ) : (
-              <SendIcon fontSize="small" />
-            )}
-          </IconButton>
+            {/* Message Input */}
+            <TextField
+              fullWidth
+              label="Type here"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading || !selectedConversationId}
+              variant="filled"
+              InputProps={{
+                disableUnderline: true,
+                style: {
+                  color: '#fff',
+                  fontSize: '0.8rem', // Smaller font size
+                  paddingTop: '4px',
+                  paddingBottom: '4px',
+                },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {/* Emoji Icon */}
+                    <IconButton
+                      sx={{ color: '#9E9E9E', padding: '2px' }} // Reduced padding
+                      aria-label="add emoji"
+                    >
+                      <MoodIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              InputLabelProps={{
+                style: { color: '#9E9E9E', fontSize: '0.8rem' }, // Smaller font size
+              }}
+              sx={{
+                flexGrow: 1,
+                mr: 1,
+              }}
+            />
+
+            {/* Send Button */}
+            <IconButton
+              onClick={() => sendMessage()}
+              disabled={isLoading || !selectedConversationId}
+              sx={{
+                color: '#4CAF50',
+                padding: '6px', // Reduced padding
+              }}
+              aria-label="send message"
+            >
+              {isLoading ? (
+                <CircularProgress size={18} />
+              ) : (
+                <SendIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Box>
         </Box>
+
+        {/* Typing Animation Keyframes */}
+        <style>
+          {`
+            @keyframes blink {
+              0% { opacity: 0.2; }
+              20% { opacity: 1; }
+              100% { opacity: 0.2; }
+            }
+          `}
+        </style>
       </Box>
 
-      {/* Typing Animation Keyframes */}
-      <style>
-        {`
-          @keyframes blink {
-            0% { opacity: 0.2; }
-            20% { opacity: 1; }
-            100% { opacity: 0.2; }
-          }
-        `}
-      </style>
+      {/* Dialog for naming a new conversation */}
+      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+        <DialogTitle>Create a New Conversation</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Conversation Title"
+            type="text"
+            fullWidth
+            value={newConversationTitle}
+            onChange={(e) => setNewConversationTitle(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleCreateConversation}
+            disabled={!newConversationTitle.trim()}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for confirming deletion */}
+      <Dialog
+        open={isDeleteDialogOpen}
+        onClose={cancelDeleteConversation}
+      >
+        <DialogTitle>Delete Conversation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this conversation? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDeleteConversation}>Cancel</Button>
+          <Button
+            onClick={confirmDeleteConversation}
+            color="error"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

@@ -1,4 +1,4 @@
-/* chat.css */
+/* Chat.css */
 
 /* CSS Reset */
 * {
@@ -11,24 +11,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap');
 
 html,
-body {
-  height: 100%;
+body,
+#root {
+  /* Changed from height: 100%; to allow content to dictate height */
+  height: auto;
 }
 
 body {
   background-color: #181818;
   color: #d0d0d0;
   font-family: 'Roboto Slab', serif;
-  overflow: hidden;
+  /* Removed overflow: hidden; */
 }
 
+/* .App */
 .App {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+  /* Removed height: 100vh; */
+  /* Removed overflow: hidden; */
 }
 
+/* Navbar */
 .navbar {
   position: fixed;
   top: 0;
@@ -37,26 +41,21 @@ body {
   z-index: 10;
 }
 
+/* Main Content */
 .main-content {
   display: flex;
-  flex-grow: 1;
-  overflow: hidden;
+  flex-direction: column; /* Changed to column since there's no sidebar */
+  /* Removed flex-grow: 1; */
+  /* Removed overflow: hidden; */
   margin-top: 64px; /* Adjust to your navbar's height */
 }
 
-/* Sidebar Styling */
-.sidebar-container {
-  width: 20%;
-  background-color: #1E1E1E;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-/* ChatBot container styling */
+/* ChatBot Container */
 .chatbot-container {
-  flex-grow: 1;
-  background-color: #1E1E1E; /* Changed to match navbar color */
+  /* Removed flex-grow: 1; */
+  background-color: #1E1E1E;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Removed overflow: hidden; */
+  /* Removed height: calc(100vh - 64px); */
 }

@@ -1581,3 +1581,31 @@ Which option sounds appealing to you, or do you have something else in mind?
 User: Hello!
 AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Im feeling depressed
+AI: I'm so sorry to hear that you're feeling depressed. It takes a lot of courage to acknowledge and share your emotions. I'm here to listen and offer support. Remember that you're not alone, and many people experience depression at some point in their lives.
+
+Would you like to talk about what's been going on and how you've been feeling? Sometimes sharing your thoughts and emotions with someone who can listen without judgment can be helpful.
+
+If you're not comfortable talking about it, that's okay too. We can focus on some coping strategies and resources that might help you feel better. Here are a few things that might be helpful:
+
+1. **Reach out to a trusted friend or family member**: Talking to someone you trust can be a great way to get support and feel heard.
+2. **Practice self-care**: Make sure you're getting enough sleep, eating healthy foods, and engaging in activities that bring you joy.
+3. **Exercise**: Regular exercise can help improve your mood and reduce symptoms of depression.
+4. **Mindfulness and meditation**: These practices can help you stay present and focused on the moment, rather than getting caught up in negative thoughts.
+5. **Seek professional help**: If you're struggling with depression, consider reaching out to a mental health professional who can provide you with support and guidance.
+
+Remember, depression is not a sign of weakness, and it's not something you can simply "snap out of." It's a serious mental health condition that requires treatment and support.
+
+If you're in immediate crisis or need someone to talk to, there are resources available to you:
+
+* **National Alliance on Mental Illness (NAMI) Helpline**: 1-800-950-6264
+* **Crisis Text Line**: Text "HOME" to 741741
+* **Your healthcare provider or therapist**: Reach out to them for support and guidance.
+
+Remember, you are not alone, and there is hope for healing and recovery.
+
+What do you need right now? Do you want to talk, or would you like some more information on coping strategies and resources?
+

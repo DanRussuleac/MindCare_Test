@@ -1,4 +1,3 @@
-// src/pages/AuthPage.js
 import React, { useState } from 'react';
 import {
   Box,
@@ -22,12 +21,10 @@ const AuthPage = () => {
 
   const handleLogin = (credentials) => {
     console.log('Logging in with:', credentials);
-    // Perform login logic here
   };
 
   const handleRegister = (credentials) => {
     console.log('Registering with:', credentials);
-    // Perform registration logic here
   };
 
   return (
@@ -39,7 +36,7 @@ const AuthPage = () => {
         sm={4}
         md={6}
         sx={{
-          position: 'relative', // Allows absolute positioning within this container
+          position: 'relative', 
           backgroundColor: 'grey.900',
           overflow: 'hidden',
         }}
@@ -56,7 +53,7 @@ const AuthPage = () => {
             transform: 'translate(-50%, -50%)',
             color: '#FFFFFF',
             textAlign: 'center',
-            zIndex: 1, // Ensures text appears above the particle effect
+            zIndex: 1, 
           }}
         >
           <Typography variant="h2" component="h1" gutterBottom>

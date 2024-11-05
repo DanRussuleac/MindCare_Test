@@ -1609,3 +1609,32 @@ Remember, you are not alone, and there is hope for healing and recovery.
 
 What do you need right now? Do you want to talk, or would you like some more information on coping strategies and resources?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Hello!
+AI: Hello. It's nice to meet you. I'm here to help with any questions or information you might need. Is there a specific topic you'd like to discuss or would you like me to suggest some interesting facts?
+
+User: Sounds great
+AI: I'm here to help and provide information on a wide range of topics. Whether it's history, science, technology, entertainment, or anything else, feel free to ask me any questions you have. I'll do my best to provide accurate and helpful answers.
+
+Is there something specific you'd like to know or discuss, or would you like me to suggest some topics?
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: My first Convo
+AI: Welcome to our conversation. I'm excited to chat with you. Is there something specific you'd like to talk about, or are you open to exploring a wide range of topics? I can provide information, answer questions, or just have a fun conversation. What's on your mind?
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: t
+AI: It seems like you started to type something, but it got cut off. Could you please complete your question or statement? I'm here to help with any information or topic you'd like to discuss.
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+

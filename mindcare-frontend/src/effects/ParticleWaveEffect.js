@@ -10,10 +10,8 @@ export default class ParticleWaveEffect {
   }
 
   init() {
-    // Scene
     this.scene = new THREE.Scene();
 
-    // Camera
     this.camera = new THREE.PerspectiveCamera(
       75,
       this.width / this.height,
@@ -22,12 +20,10 @@ export default class ParticleWaveEffect {
     );
     this.camera.position.z = 1000;
 
-    // Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(this.width, this.height);
     this.el.appendChild(this.renderer.domElement);
 
-    // Particle System
     this.particleCount = 1000;
     this.geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(this.particleCount * 3);
@@ -49,7 +45,6 @@ export default class ParticleWaveEffect {
       new THREE.BufferAttribute(positions, 3)
     );
 
-    // Material
     this.material = new THREE.PointsMaterial({
       color: 0xffffff,
       size: 3,
@@ -57,14 +52,11 @@ export default class ParticleWaveEffect {
       opacity: 0.7,
     });
 
-    // Points
     this.points = new THREE.Points(this.geometry, this.material);
     this.scene.add(this.points);
 
-    // Animation Variables
     this.clock = new THREE.Clock();
 
-    // Bind the animate function
     this.animate = this.animate.bind(this);
     this.renderer.setAnimationLoop(this.animate);
   }

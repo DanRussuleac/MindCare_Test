@@ -1,13 +1,12 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom'; // Use Navigate instead of Redirect
+import { Navigate } from 'react-router-dom'; 
 
-// A function to check if the user is authenticated
 const isAuthenticated = () => {
-  return !!localStorage.getItem('token'); // Check if token is stored in localStorage
+  return !!localStorage.getItem('token'); 
 };
 
 const ProtectedRoute = ({ children }) => {
-  return isAuthenticated() ? children : <Navigate to="/login" />; // Navigate to /login if not authenticated
+  return isAuthenticated() ? children : <Navigate to="/login" />; 
 };
 
 export default ProtectedRoute;

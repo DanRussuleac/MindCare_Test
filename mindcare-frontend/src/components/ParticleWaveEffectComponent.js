@@ -1,4 +1,3 @@
-// src/components/ParticleWaveEffectComponent.js
 import React, { useEffect, useRef } from 'react';
 import ParticleWaveEffect from '../effects/ParticleWaveEffect.js';
 

@@ -1,5 +1,3 @@
-// src/components/Navbar.js
-
 import React, { useState, useEffect } from 'react';
 import {
   AppBar,
@@ -21,11 +19,10 @@ import userAvatar from '../images/user.png';
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [username, setUsername] = useState(''); // State to hold username
-  const navigate = useNavigate(); // Use navigate to programmatically navigate
+  const [username, setUsername] = useState(''); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    // Fetch the username when the component mounts
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -54,16 +51,12 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    // Remove the token from localStorage
     localStorage.removeItem('token');
 
-    // Log the successful logout
     console.log('Successfully logged out');
 
-    // Close the menu
     handleCloseUserMenu();
 
-    // Redirect the user to the login page
     navigate('/login');
   };
 
@@ -113,7 +106,6 @@ function Navbar() {
 
         {/* Right Side - Username and User Profile */}
         <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          {/* Display Username next to Avatar */}
           <Typography
             sx={{
               color: '#FFFFFF',

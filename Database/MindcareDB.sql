@@ -1,4 +1,3 @@
--- Create conversations table
 CREATE TABLE conversations (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -7,12 +6,10 @@ CREATE TABLE conversations (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Create messages table
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
     conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
-    sender VARCHAR(50) NOT NULL, -- 'user' or 'bot'
+    sender VARCHAR(50) NOT NULL,
     content TEXT NOT NULL,
     timestamp TIMESTAMP DEFAULT NOW()
 );
-

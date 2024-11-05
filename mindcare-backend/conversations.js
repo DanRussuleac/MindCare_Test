@@ -1,10 +1,8 @@
-// conversations.js
 import express from 'express';
 const router = express.Router();
 import { pool } from './db.js';
 import verifyToken from './middleware/auth.js';
 
-// Get all conversations for a user
 router.get('/', verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
@@ -19,13 +17,11 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-// Get messages for a specific conversation
 router.get('/:conversationId/messages', verifyToken, async (req, res) => {
   try {
     const { conversationId } = req.params;
     const userId = req.userId;
 
-    // Verify that the conversation belongs to the user
     const convoCheck = await pool.query(
       'SELECT * FROM conversations WHERE id = $1 AND user_id = $2',
       [conversationId, userId]
@@ -45,7 +41,6 @@ router.get('/:conversationId/messages', verifyToken, async (req, res) => {
   }
 });
 
-// Create a new conversation
 router.post('/', verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
@@ -62,13 +57,11 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-// Delete a conversation
 router.delete('/:conversationId', verifyToken, async (req, res) => {
     try {
       const { conversationId } = req.params;
       const userId = req.userId;
   
-      // Verify ownership
       const convoCheck = await pool.query(
         'SELECT * FROM conversations WHERE id = $1 AND user_id = $2',
         [conversationId, userId]
@@ -77,7 +70,6 @@ router.delete('/:conversationId', verifyToken, async (req, res) => {
         return res.status(403).json({ error: 'Forbidden' });
       }
   
-      // Delete the conversation
       await pool.query('DELETE FROM conversations WHERE id = $1', [conversationId]);
   
       res.json({ message: 'Conversation deleted successfully' });

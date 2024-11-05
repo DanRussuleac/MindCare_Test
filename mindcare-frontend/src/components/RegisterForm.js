@@ -16,7 +16,7 @@ const RegisterForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [success, setSuccess] = useState(''); // State for success message
+  const [success, setSuccess] = useState(''); 
 
   const validate = () => {
     const temp = {};
@@ -44,10 +44,9 @@ const RegisterForm = () => {
       try {
         const response = await axios.post('http://localhost:5000/api/auth/register', credentials);
         console.log('Registration successful!', response.data);
-        setSuccess('Registration successful! You can now log in.'); // Set success message
-        setErrors({}); // Clear errors
+        setSuccess('Registration successful! You can now log in.'); 
+        setErrors({}); 
       } catch (error) {
-        // Check if email or username is already in use
         if (error.response && error.response.data.msg === 'Email already in use') {
           setErrors({ email: 'Email already in use' });
         } else if (error.response && error.response.data.msg === 'Username already in use') {
@@ -55,7 +54,7 @@ const RegisterForm = () => {
         } else {
           setErrors({ general: 'Registration failed. Please try again.' });
         }
-        setSuccess(''); // Clear success message
+        setSuccess(''); 
       }
     }
   };

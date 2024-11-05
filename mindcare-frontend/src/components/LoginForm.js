@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom'; 
 import {
   Box,
   TextField,
@@ -15,7 +15,7 @@ const LoginForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate(); // Use navigate for redirecting
+  const navigate = useNavigate(); 
 
   const validate = () => {
     const temp = {};
@@ -40,10 +40,8 @@ const LoginForm = () => {
         const response = await axios.post('http://localhost:5000/api/auth/login', credentials);
         const { token } = response.data;
 
-        // Save token in localStorage
         localStorage.setItem('token', token);
 
-        // Redirect to the /home route
         navigate('/home');
 
         console.log('Login successful!');

@@ -1,4 +1,3 @@
-// src/components/ChatBot.js
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
@@ -18,10 +17,10 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText, // Added for dialog content text
+  DialogContentText, 
   DialogActions,
   Button,
-  Tooltip, // Added for tooltips
+  Tooltip, 
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MoodIcon from '@mui/icons-material/Mood';
@@ -32,7 +31,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-// Import the avatar images
 import userAvatar from '../images/user.png';
 import aiAvatar from '../images/ai.png';
 
@@ -65,20 +63,16 @@ function ChatBot() {
     'Can we chat?',
   ];
 
-  // List of random names to assign to voices
   const voiceNames = ['Alex', 'Suzan', 'Taylor', 'Riley', 'Casey', 'Jordan'];
 
-  const [username, setUsername] = useState(''); // State to hold username
+  const [username, setUsername] = useState(''); 
 
-  // Dialog state for creating a new conversation
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newConversationTitle, setNewConversationTitle] = useState('');
 
-  // Dialog state for confirming deletion
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [conversationToDelete, setConversationToDelete] = useState(null);
 
-  // Fetch the username when the component mounts
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -98,7 +92,6 @@ function ChatBot() {
     fetchUser();
   }, []);
 
-  // Fetch available voices and assign random names
   useEffect(() => {
     const synth = window.speechSynthesis;
 
@@ -109,10 +102,8 @@ function ChatBot() {
           voice.lang.startsWith('en')
         );
 
-        // Limit to six voices
         const limitedVoices = englishVoices.slice(0, 6);
 
-        // Map voices to random names
         const voicesWithNames = limitedVoices.map((voice, index) => ({
           voice,
           name: voiceNames[index] || `Voice ${index + 1}`,
@@ -129,7 +120,6 @@ function ChatBot() {
     loadVoices();
   }, []);
 
-  // Fetch user's conversations
   useEffect(() => {
     const fetchConversations = async () => {
       try {
@@ -146,24 +136,21 @@ function ChatBot() {
         });
         setConversations(response.data);
 
-        // If no conversations exist, prompt to create one
         if (response.data.length === 0) {
-          setIsDialogOpen(true); // Open dialog to create a conversation
+          setIsDialogOpen(true); 
         } else {
-          // Select the first conversation by default
           if (!selectedConversationId) {
             setSelectedConversationId(response.data[0].id);
           }
         }
       } catch (error) {
         console.error('Error fetching conversations:', error);
-        setConversations([]); // Ensure conversations is set even on error
+        setConversations([]); 
       }
     };
     fetchConversations();
   }, []);
 
-  // Fetch messages when selectedConversationId changes
   useEffect(() => {
     const fetchMessages = async () => {
       if (selectedConversationId) {
@@ -180,7 +167,7 @@ function ChatBot() {
           setConversation(response.data);
         } catch (error) {
           console.error('Error fetching messages:', error);
-          setConversation([]); // Ensure conversation is set even on error
+          setConversation([]); 
         }
       } else {
         setConversation([]);
@@ -189,7 +176,6 @@ function ChatBot() {
     fetchMessages();
   }, [selectedConversationId]);
 
-  // Scroll to bottom when conversation updates
   useEffect(() => {
     scrollToBottom();
 
@@ -212,7 +198,6 @@ function ChatBot() {
     }
   };
 
-  // Function to send a message
   const sendMessage = async (userMessage = message) => {
     if (userMessage.trim()) {
       try {
@@ -220,22 +205,19 @@ function ChatBot() {
         setIsLoading(true);
         setTyping(true);
 
-        // Add user message to conversation locally
         const userMsg = {
-          id: Date.now(), // Unique ID
+          id: Date.now(), 
           sender: 'user',
           content: userMessage,
         };
         setConversation((prev) => [...prev, userMsg]);
 
-        // Clear input field if the message is from the input box
         if (userMessage === message) {
           setMessage('');
         }
 
         const token = localStorage.getItem('token');
 
-        // Send message to backend
         const result = await axios.post(
           `http://localhost:5000/api/bot/${selectedConversationId}/send`,
           { message: userMessage },
@@ -247,9 +229,8 @@ function ChatBot() {
         );
         const botResponse = result.data.botResponse;
 
-        // Add bot's response to conversation locally
         const botMsg = {
-          id: Date.now() + 1, // Ensure unique ID
+          id: Date.now() + 1, 
           sender: 'bot',
           content: botResponse,
         };
@@ -264,7 +245,6 @@ function ChatBot() {
     }
   };
 
-  // Handle Enter key press to send message
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -272,15 +252,12 @@ function ChatBot() {
     }
   };
 
-  // Handle preprompt click
   const handlePrepromptClick = (prompt) => {
     sendMessage(prompt);
   };
 
-  // Function to handle text-to-speech
   const handleSpeak = (text) => {
     if ('speechSynthesis' in window && selectedVoice) {
-      // Cancel any ongoing speech
       if (utteranceRef.current) {
         window.speechSynthesis.cancel();
       }
@@ -288,13 +265,11 @@ function ChatBot() {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.voice = selectedVoice.voice;
       utterance.lang = selectedVoice.voice.lang;
-      utterance.pitch = 1; // Adjust pitch for a soothing tone
-      utterance.rate = 0.9; // Slightly slower rate for clarity
+      utterance.pitch = 1; 
+      utterance.rate = 0.9; 
 
-      // Store the utterance in the ref to prevent garbage collection
       utteranceRef.current = utterance;
 
-      // Clean up the ref when speech ends
       utterance.onend = () => {
         utteranceRef.current = null;
       };
@@ -303,16 +278,12 @@ function ChatBot() {
     }
   };
 
-  // Handle speaker button click
   const handleSpeakerClick = (event, messageContent) => {
     if (!autoReadEnabled) {
-      // If auto-read is not enabled, open voice selection menu
       setAnchorEl(event.currentTarget);
-      setMessageToRead(messageContent); // Store the message to read
+      setMessageToRead(messageContent); 
     } else {
-      // If auto-read is enabled, turn it off
       setAutoReadEnabled(false);
-      // Cancel any ongoing speech
       if (utteranceRef.current) {
         window.speechSynthesis.cancel();
         utteranceRef.current = null;
@@ -320,36 +291,30 @@ function ChatBot() {
     }
   };
 
-  // Handle voice selection
   const handleVoiceSelect = (voiceWithName) => {
     setSelectedVoice(voiceWithName);
     setAutoReadEnabled(true);
     setAnchorEl(null);
 
-    // Read the message that was clicked
     if (messageToRead) {
       handleSpeak(messageToRead);
-      setMessageToRead(null); // Reset after reading
+      setMessageToRead(null); 
     }
   };
 
-  // Handle closing the voice selection menu
   const handleClose = () => {
     setAnchorEl(null);
-    setMessageToRead(null); // Reset if menu is closed without selection
+    setMessageToRead(null); 
   };
 
-  // Handle selecting a conversation
   const handleSelectConversation = (conversationId) => {
     setSelectedConversationId(conversationId);
   };
 
-  // Handle starting a new conversation
   const handleNewConversation = () => {
-    setIsDialogOpen(true); // Open the dialog to enter conversation title
+    setIsDialogOpen(true); 
   };
 
-  // Handle creating a new conversation after entering the title
   const handleCreateConversation = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -368,15 +333,13 @@ function ChatBot() {
       setNewConversationTitle('');
       setIsDialogOpen(false);
 
-      // Add welcome message from the bot
       const welcomeMessage = {
-        id: Date.now(), // Unique ID
+        id: Date.now(), 
         sender: 'bot',
         content: `Welcome, ${username}! How can I assist you today?`,
       };
       setConversation([welcomeMessage]);
 
-      // Optionally, save the welcome message to the backend
       await axios.post(
         `http://localhost:5000/api/conversations/${newConversation.id}/messages`,
         welcomeMessage,
@@ -391,13 +354,11 @@ function ChatBot() {
     }
   };
 
-  // Handle deleting a conversation (updated to open confirmation dialog)
   const handleDeleteConversation = (conversationId) => {
     setConversationToDelete(conversationId);
     setIsDeleteDialogOpen(true);
   };
 
-  // Confirm deletion of a conversation
   const confirmDeleteConversation = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -406,9 +367,7 @@ function ChatBot() {
           Authorization: `Bearer ${token}`,
         },
       });
-      // Remove the deleted conversation from the list
       setConversations((prev) => prev.filter((conv) => conv.id !== conversationToDelete));
-      // If the deleted conversation was selected, clear it
       if (selectedConversationId === conversationToDelete) {
         setSelectedConversationId(null);
         setConversation([]);
@@ -422,7 +381,6 @@ function ChatBot() {
     }
   };
 
-  // Cancel deletion of a conversation
   const cancelDeleteConversation = () => {
     setIsDeleteDialogOpen(false);
     setConversationToDelete(null);
@@ -431,7 +389,7 @@ function ChatBot() {
   return (
     <Box
       sx={{
-        height: 'calc(100vh - 64px)', // Adjust for navbar height if necessary
+        height: 'calc(100vh - 64px)', 
         display: 'flex',
       }}
     >
@@ -439,14 +397,14 @@ function ChatBot() {
       <Box
         sx={{
           width: '300px',
-          flexShrink: 0, // Prevent the sidebar from shrinking
+          flexShrink: 0, 
           backgroundColor: '#1E1E1E',
           color: '#fff',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           position: 'relative',
-          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)', // Add shadow for depth
+          boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)', 
         }}
       >
         {/* Header */}
@@ -457,8 +415,8 @@ function ChatBot() {
             fontFamily: "'Roboto Slab', serif",
             fontWeight: 'bold',
             color: '#D3D3D3',
-            textAlign: 'center', // Center-align the title
-            borderBottom: '1px solid #333', // Separate with border
+            textAlign: 'center', 
+            borderBottom: '1px solid #333', 
           }}
         >
           Conversations
@@ -482,8 +440,8 @@ function ChatBot() {
                     marginBottom: '8px',
                     borderRadius: '8px',
                     backgroundColor: '#292929',
-                    '&:hover': { backgroundColor: '#333' }, // Hover effect
-                    transition: 'background-color 0.3s ease', // Smooth transition
+                    '&:hover': { backgroundColor: '#333' }, 
+                    transition: 'background-color 0.3s ease', 
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -504,7 +462,7 @@ function ChatBot() {
                       edge="end"
                       aria-label="delete"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering onSelectConversation
+                        e.stopPropagation(); 
                         handleDeleteConversation(conv.id);
                       }}
                       sx={{ color: '#D3D3D3' }}
@@ -556,7 +514,7 @@ function ChatBot() {
           backgroundColor: '#1E1E1E',
           color: '#fff',
           height: '100%',
-          overflow: 'hidden', // Ensure content doesn't overflow
+          overflow: 'hidden', 
         }}
       >
         {/* Chat messages area */}
@@ -569,7 +527,7 @@ function ChatBot() {
         >
           {conversation.map((msg) => (
             <Box
-              key={msg.id} // Use unique ID as key
+              key={msg.id} 
               sx={{
                 display: 'flex',
                 justifyContent:
@@ -587,7 +545,7 @@ function ChatBot() {
                   flexDirection:
                     msg.sender === 'user' ? 'row-reverse' : 'row',
                   alignItems: 'flex-end',
-                  maxWidth: '100%', // Ensure the message row doesn't exceed the container
+                  maxWidth: '100%', 
                 }}
               >
                 {/* Avatar */}
@@ -614,10 +572,10 @@ function ChatBot() {
                         ? '20px 20px 0px 20px'
                         : '20px 20px 20px 0px',
                     padding: '8px 12px',
-                    maxWidth: '70%', // Limit the width to 70% of the chat area
+                    maxWidth: '70%', 
                     wordWrap: 'break-word',
                     wordBreak: 'break-word',
-                    overflowWrap: 'break-word', // Ensure long words break to the next line
+                    overflowWrap: 'break-word', 
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                     '& ul, & ol': {
                       margin: 0,
@@ -716,7 +674,7 @@ function ChatBot() {
                     color: '#fff',
                     borderRadius: '20px 20px 20px 0px',
                     padding: '8px 12px',
-                    maxWidth: '70%', // Ensure consistency with message bubbles
+                    maxWidth: '70%', 
                     wordWrap: 'break-word',
                     wordBreak: 'break-word',
                     overflowWrap: 'break-word',
@@ -790,8 +748,8 @@ function ChatBot() {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center', // Center horizontally
-            padding: '4px', // Reduced padding to decrease height
+            justifyContent: 'center', 
+            padding: '4px', 
             backgroundColor: '#1E1E1E',
             marginBottom: '10px',
           }}
@@ -802,9 +760,9 @@ function ChatBot() {
               display: 'flex',
               alignItems: 'center',
               backgroundColor: '#424242',
-              borderRadius: '16px', // Slightly smaller border radius
-              width: '70%', // Set width to 70% of the container
-              padding: '0 4px', // Reduced padding
+              borderRadius: '16px', 
+              width: '70%', 
+              padding: '0 4px', 
             }}
           >
             {/* Message Input */}
@@ -820,15 +778,14 @@ function ChatBot() {
                 disableUnderline: true,
                 style: {
                   color: '#fff',
-                  fontSize: '0.8rem', // Smaller font size
+                  fontSize: '0.8rem', 
                   paddingTop: '4px',
                   paddingBottom: '4px',
                 },
                 endAdornment: (
                   <InputAdornment position="end">
-                    {/* Emoji Icon */}
                     <IconButton
-                      sx={{ color: '#9E9E9E', padding: '2px' }} // Reduced padding
+                      sx={{ color: '#9E9E9E', padding: '2px' }} 
                       aria-label="add emoji"
                     >
                       <MoodIcon fontSize="small" />
@@ -837,7 +794,7 @@ function ChatBot() {
                 ),
               }}
               InputLabelProps={{
-                style: { color: '#9E9E9E', fontSize: '0.8rem' }, // Smaller font size
+                style: { color: '#9E9E9E', fontSize: '0.8rem' },
               }}
               sx={{
                 flexGrow: 1,
@@ -851,7 +808,7 @@ function ChatBot() {
               disabled={isLoading || !selectedConversationId}
               sx={{
                 color: '#4CAF50',
-                padding: '6px', // Reduced padding
+                padding: '6px', 
               }}
               aria-label="send message"
             >

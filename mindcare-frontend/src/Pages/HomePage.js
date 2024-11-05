@@ -1,5 +1,3 @@
-// src/Pages/Homepage.js
-
 import React, { useState } from 'react';
 import {
   Grid,
@@ -16,7 +14,6 @@ import { styled } from '@mui/material/styles';
 import Navbar from '../components/Navbar';
 import { Link as RouterLink } from 'react-router-dom';
 
-// Import icons
 import ChatIcon from '@mui/icons-material/Chat';
 import BookIcon from '@mui/icons-material/Book';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -24,10 +21,8 @@ import MoodIcon from '@mui/icons-material/Mood';
 import HotelIcon from '@mui/icons-material/Hotel';
 import ShareIcon from '@mui/icons-material/Share';
 
-// Import Carousel
 import Carousel from 'react-material-ui-carousel';
 
-// Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
   minHeight: '220px',
   background: 'linear-gradient(145deg, #2c2c2c, #1a1a1a)',
@@ -54,7 +49,6 @@ const StyledIcon = styled('div')(({ theme }) => ({
   },
 }));
 
-// Modal styles
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -70,7 +64,6 @@ const modalStyle = {
   borderRadius: '12px',
 };
 
-// Features Array with Provided Images
 const features = [
   {
     title: 'Mental Health Chatbot',
@@ -147,8 +140,8 @@ const Homepage = () => {
       sx={{
         backgroundColor: '#1E1E1E',
         minHeight: '100vh',
-        display: 'block', // Allows natural content flow
-        overflowY: 'auto', // Ensures vertical scrolling is enabled
+        display: 'block', 
+        overflowY: 'auto', 
       }}
     >
       {/* Navbar */}
@@ -160,7 +153,7 @@ const Homepage = () => {
           indicators={true}
           navButtonsAlwaysVisible
           animation="fade"
-          interval={5000} // Reduced from 7000ms to 5000ms to speed up the carousel
+          interval={5000} 
           navButtonsProps={{
             style: {
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -316,7 +309,7 @@ const Homepage = () => {
                         variant="outlined"
                         component={RouterLink}
                         to={feature.link}
-                        onClick={(e) => e.stopPropagation()} // Prevent card click
+                        onClick={(e) => e.stopPropagation()}
                         sx={{
                           borderColor: '#4CAF50',
                           color: '#4CAF50',

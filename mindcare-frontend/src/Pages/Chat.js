@@ -1,8 +1,7 @@
-// chat.js
 import React from 'react';
-import Navbar from '../components/Navbar'; // Adjust the path if needed
-import ChatBot from '../components/ChatBot'; // Adjust the path if needed
-import '../styles/Chat.css'; // Importing the separate CSS file for the Chat page
+import Navbar from '../components/Navbar'; 
+import ChatBot from '../components/ChatBot'; 
+import '../styles/Chat.css'; 
 
 const Chat = () => {
   return (

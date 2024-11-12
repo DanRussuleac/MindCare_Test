@@ -9,6 +9,7 @@ import conversationRoutes from './conversations.js';
 import { pool } from './db.js'; 
 import journalRoutes from './journal.js';
 import verifyToken from './middleware/auth.js'; 
+import moodRoutes from './mood.js';
 
 dotenv.config();
 
@@ -35,6 +36,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/conversations', verifyToken, conversationRoutes);
 
 app.use('/api/journal', verifyToken, journalRoutes);
+
+app.use('/api/moods', moodRoutes);
 
 app.post('/api/bot/:conversationId/send', verifyToken, async (req, res) => {
   const { message } = req.body;

@@ -98,7 +98,7 @@ const features = [
     detailedDescription:
       'Monitor your mood patterns to gain insights into your emotional well-being. Understanding your mood fluctuations can help you identify triggers and manage your mental health more effectively.',
     icon: <MoodIcon fontSize="large" />,
-    link: '/moodrange',
+    link: '/mood-tracker',
     image: 'https://s22908.pcdn.co/wp-content/uploads/2021/02/mood-tracking-technology-1068x706.jpg',
   },
   {

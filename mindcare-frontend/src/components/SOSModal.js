@@ -58,14 +58,12 @@ const SOSModal = ({ open, handleClose }) => {
               North America (NA)
             </Typography>
             <Typography variant="body1"><strong>Emergency Services:</strong> 911</Typography>
-            <Typography variant="body1"><strong>Poison Control:</strong> 1-800-222-1222</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" sx={{ color: '#FFEB3B', mb: 1 }}>
               Europe (EU)
             </Typography>
             <Typography variant="body1"><strong>Emergency Services:</strong> 112</Typography>
-            <Typography variant="body1"><strong>Poison Control:</strong> Varies by country</Typography>
           </Grid>
         </Grid>
         <StyledButton variant="contained" onClick={handleClose} fullWidth>

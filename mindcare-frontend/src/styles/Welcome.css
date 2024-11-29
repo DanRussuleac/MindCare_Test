@@ -1,47 +1,37 @@
-/* welcome.css */
-
-/* Import AOS styles if you decide to use them in the future */
-/* @import 'aos/dist/aos.css'; */
-
-/* Reset some default styles */
 body, html, #root {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: 'Roboto Slab', serif;
-  background-color: #1E1E1E; /* Dark grey background */
+  background-color: #1E1E1E; 
 }
 
-/* Hero Content Styling */
 .hero-content {
   max-width: 800px;
   padding: 0 20px;
 }
 
-/* Fade-in Animation */
 .fade-in {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeIn 1s forwards;
 }
 
-/* Slide-in Animation */
 .slide-in {
   opacity: 0;
   transform: translateX(-50px);
   animation: slideIn 1s forwards;
-  animation-delay: 0.5s; /* Delay to stagger animations */
+  animation-delay: 0.5s; 
 }
 
-/* Fade-in Button Animation */
 .fade-in-button {
   opacity: 0;
   transform: scale(0.9);
   animation: fadeInScale 1s forwards;
-  animation-delay: 1s; /* Delay to ensure it appears after other elements */
+  animation-delay: 1s; 
 }
 
-/* Keyframes Definitions */
+
 @keyframes fadeIn {
   to {
     opacity: 1;
@@ -63,7 +53,6 @@ body, html, #root {
   }
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .hero-content {
     padding: 0 15px;
@@ -74,7 +63,6 @@ body, html, #root {
   }
 }
 
-/* Smooth Scroll Behavior */
 html {
   scroll-behavior: smooth;
 }

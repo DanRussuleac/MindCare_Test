@@ -10,7 +10,7 @@ import {
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import ParticleWaveEffectComponent from '../components/ParticleWaveEffectComponent'; // Import the component
+import ParticleWaveEffectComponent from '../components/ParticleWaveEffectComponent'; 
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);

@@ -1,21 +1,19 @@
-// src/components/Welcome.js
 
 import React, { useEffect, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { Link as RouterLink } from 'react-router-dom';
 import * as THREE from 'three';
-import CLOUDS from 'vanta/dist/vanta.clouds.min'; // Correct import for Vanta.CLOUDS
-import '../styles/Welcome.css'; // Import the CSS file
+import CLOUDS from 'vanta/dist/vanta.clouds.min'; 
+import '../styles/Welcome.css'; 
 
-// Styled components
 const HeroSection = styled(Box)(({ theme }) => ({
   height: '100vh',
   width: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#FFFFFF', // White text
+  color: '#FFFFFF', 
   textAlign: 'center',
   position: 'relative',
   overflow: 'hidden',
@@ -27,7 +25,7 @@ const Overlay = styled(Box)(({ theme }) => ({
   left: 0,
   width: '100%',
   height: '100%',
-  backgroundColor: 'rgba(34, 34, 34, 0.6)', // Dark grey tint with increased opacity
+  backgroundColor: 'rgba(34, 34, 34, 0.6)', 
   zIndex: 1,
 }));
 
@@ -39,14 +37,14 @@ const Content = styled(Box)(({ theme }) => ({
 }));
 
 function Welcome() {
-  const vantaRef = useRef(null); // Reference to the HeroSection
-  const vantaEffect = useRef(null); // Reference to store the Vanta effect instance
+  const vantaRef = useRef(null); 
+  const vantaEffect = useRef(null); 
 
   useEffect(() => {
     if (!vantaEffect.current) {
       vantaEffect.current = CLOUDS({
         el: vantaRef.current,
-        THREE: THREE, // Pass the THREE.js instance
+        THREE: THREE, 
         mouseControls: true,
         touchControls: true,
         gyroControls: true,
@@ -64,13 +62,12 @@ function Welcome() {
         speed: 1.5, 
       });
     }
-    // Cleanup function to destroy the effect when the component unmounts
     return () => {
       if (vantaEffect.current) {
         vantaEffect.current.destroy();
       }
     };
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []); 
 
   return (
     <HeroSection ref={vantaRef} id="your-element-selector">

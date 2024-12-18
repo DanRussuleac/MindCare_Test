@@ -1670,3 +1670,20 @@ Is there something specific you'd like to talk about, or would you like me to su
 User: Hello!
 AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
 
+User: Hello!
+AI: Hello. It's nice to meet you. I'm here to help you with any questions or topics you'd like to discuss. I have access to a vast amount of knowledge, so feel free to ask me anything. Is there something specific you're interested in learning about, or would you like to have a conversation?
+
+User: Im having a hard day
+AI: I'm so sorry to hear that you're having a tough day. It can be really overwhelming and feel like everything is piling up. I'm here to listen and help in any way I can.
+
+Would you like to talk about what's going on and how you're feeling? Sometimes sharing your thoughts and emotions with someone (or in this case, an AI assistant) can help you process and feel a bit better.
+
+If you're not feeling like talking, I can also offer some suggestions to help you relax and take a break from the stress of the day. We could:
+
+- Listen to some calming music together
+- Practice some deep breathing exercises
+- Play a game or have a fun conversation to take your mind off things
+- Explore some relaxation techniques, such as meditation or visualization
+
+What sounds good to you?
+

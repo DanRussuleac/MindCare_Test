@@ -5,8 +5,8 @@ body {
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #121212; /* Background color for the app */
-    color: #ffffff; /* Text color for readability */
+    background-color: #121212; 
+    color: #ffffff; 
   }
   
   code {
@@ -14,20 +14,18 @@ body {
       monospace;
   }
   
-  /* Existing global styles */
   body,
   html,
   #root {
     margin: 0;
     padding: 0;
-    height: auto; /* Ensures content dictates height */
+    height: auto; 
     font-family: 'Roboto Slab', serif;
-    background-color: #1E1E1E; /* Dark grey background */
-    color: #d0d0d0; /* Light grey text */
-    scroll-behavior: smooth; /* Smooth scrolling */
+    background-color: #1E1E1E; 
+    color: #d0d0d0; 
+    scroll-behavior: smooth; 
   }
   
-  /* Custom Scrollbar Styles for WebKit Browsers */
   ::-webkit-scrollbar {
     width: 12px;
   }
@@ -46,11 +44,9 @@ body {
     background-color: #777777;
   }
   
-  /* Custom Scrollbar Styles for Firefox */
   body {
     scrollbar-width: thin;
     scrollbar-color: #555555 #1E1E1E;
   }
   
-  /* Additional styles can follow here */
   

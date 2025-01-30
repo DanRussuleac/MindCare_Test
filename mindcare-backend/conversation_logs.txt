@@ -1687,3 +1687,6 @@ If you're not feeling like talking, I can also offer some suggestions to help yo
 
 What sounds good to you?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+

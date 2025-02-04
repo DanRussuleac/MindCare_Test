@@ -11,6 +11,9 @@ import './App.css';
 import SOSModal from './components/SOSModal';
 import SOSButton from './components/SOSButton';
 
+// >>> ADD THIS IMPORT <<<
+import SleepTracker from './Pages/SleepTracker'; // <-- New SleepTracker page
+
 function App() {
   const [isSOSOpen, setIsSOSOpen] = useState(false);
 
@@ -29,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
+
         <Route
           path="/home"
           element={
@@ -58,6 +62,14 @@ function App() {
           element={
             <ProtectedRoute>
               <MoodTracker />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sleep-tracker"
+          element={
+            <ProtectedRoute>
+              <SleepTracker />
             </ProtectedRoute>
           }
         />

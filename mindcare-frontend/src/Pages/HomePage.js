@@ -107,7 +107,7 @@ const features = [
     detailedDescription:
       'Track your sleep habits to ensure you’re getting the rest you need. Good sleep is essential for mental health, affecting mood, energy levels, and overall well-being.',
     icon: <HotelIcon fontSize="large" />,
-    link: '/sleeptracking',
+    link: '/sleep-tracker',
     image: 'https://img.freepik.com/free-photo/bedroom-with-view-cityscape_188544-7713.jpg',
   },
   {

@@ -5,11 +5,14 @@ import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
 import fs from 'fs';
 import authRoutes from './auth.js';
-import conversationRoutes from './conversations.js'; 
-import { pool } from './db.js'; 
+import conversationRoutes from './conversations.js';
+import { pool } from './db.js';
 import journalRoutes from './journal.js';
-import verifyToken from './middleware/auth.js'; 
+import verifyToken from './middleware/auth.js';
 import moodRoutes from './mood.js';
+import sleepRoutes from './routes/sleepRoutes.js';
+import sleepGoalsRoutes from './routes/sleepGoalsRoutes.js';
+import sleepAnalysisRoutes from './routes/sleepAnalysisRoutes.js';
 
 dotenv.config();
 
@@ -38,6 +41,12 @@ app.use('/api/conversations', verifyToken, conversationRoutes);
 app.use('/api/journal', verifyToken, journalRoutes);
 
 app.use('/api/moods', moodRoutes);
+
+app.use('/api/sleep', verifyToken, sleepRoutes); 
+
+app.use('/api/sleep-goals', verifyToken, sleepGoalsRoutes);
+
+app.use('/api/sleep-analysis', verifyToken, sleepAnalysisRoutes);
 
 app.post('/api/bot/:conversationId/send', verifyToken, async (req, res) => {
   const { message } = req.body;

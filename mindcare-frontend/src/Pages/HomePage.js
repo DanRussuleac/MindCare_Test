@@ -89,7 +89,7 @@ const features = [
     detailedDescription:
       'Organize your day with our task manager. Setting goals and reminders can improve productivity and provide a sense of accomplishment, positively impacting your mental well-being.',
     icon: <ListAltIcon fontSize="large" />,
-    link: '/dailytasks',
+    link: '/daily',
     image: 'https://media.idownloadblog.com/wp-content/uploads/2023/08/Reminders-app-keyboard-shortcuts.jpg',
   },
   {

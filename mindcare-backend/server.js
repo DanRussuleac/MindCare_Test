@@ -13,6 +13,8 @@ import moodRoutes from './mood.js';
 import sleepRoutes from './routes/sleepRoutes.js';
 import sleepGoalsRoutes from './routes/sleepGoalsRoutes.js';
 import sleepAnalysisRoutes from './routes/sleepAnalysisRoutes.js';
+import remindersRoutes from './routes/reminders.js';
+import dailyTasksRoutes from './routes/dailyTasks.js';
 
 dotenv.config();
 
@@ -47,6 +49,10 @@ app.use('/api/sleep', verifyToken, sleepRoutes);
 app.use('/api/sleep-goals', verifyToken, sleepGoalsRoutes);
 
 app.use('/api/sleep-analysis', verifyToken, sleepAnalysisRoutes);
+
+app.use('/api/reminders', verifyToken, remindersRoutes);
+
+app.use('/api/daily-tasks', verifyToken, dailyTasksRoutes);
 
 app.post('/api/bot/:conversationId/send', verifyToken, async (req, res) => {
   const { message } = req.body;

@@ -1690,3 +1690,15 @@ What sounds good to you?
 User: Hello!
 AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: I want to talk.
+AI: I'm all ears (or rather, all text). What's on your mind? Do you want to discuss a particular topic, share something that's been going on in your life, or just have a casual conversation? I'm here to listen and chat.
+
+User: yo bro
+AI: What's good bro? How's life treating you? Got any questions, need assistance, or just wanna chat? I'm all ears (or rather, all text).
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat? I'm here to provide information, answer questions, or just have a conversation. What's on your mind?
+

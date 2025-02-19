@@ -10,9 +10,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 import SOSModal from './components/SOSModal';
 import SOSButton from './components/SOSButton';
+import SleepTracker from './Pages/SleepTracker';
 
-// >>> ADD THIS IMPORT <<<
-import SleepTracker from './Pages/SleepTracker'; // <-- New SleepTracker page
+// >>> ADD THIS <<<
+import DailyTasksRemindersPage from './Pages/DailyTasksRemindersPage';
 
 function App() {
   const [isSOSOpen, setIsSOSOpen] = useState(false);
@@ -70,6 +71,14 @@ function App() {
           element={
             <ProtectedRoute>
               <SleepTracker />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/daily"
+          element={
+            <ProtectedRoute>
+              <DailyTasksRemindersPage />
             </ProtectedRoute>
           }
         />

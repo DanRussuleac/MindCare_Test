@@ -70,3 +70,29 @@ CREATE TABLE IF NOT EXISTS sleep_analysis (
     suggestions TEXT,                                 -- any suggestions from the AI
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS reminders (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  reminder_time TIMESTAMP NOT NULL,
+  is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS daily_tasks (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  date DATE NOT NULL,                     -- which day this task applies to
+  content TEXT NOT NULL,                  -- short text describing the task
+  is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS daily_task_streak INTEGER NOT NULL DEFAULT 0;
+
+
+

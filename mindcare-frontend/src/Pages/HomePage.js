@@ -14,12 +14,14 @@ import { styled } from '@mui/material/styles';
 import Navbar from '../components/Navbar';
 import { Link as RouterLink } from 'react-router-dom';
 
+// ICONS
 import ChatIcon from '@mui/icons-material/Chat';
 import BookIcon from '@mui/icons-material/Book';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import MoodIcon from '@mui/icons-material/Mood';
 import HotelIcon from '@mui/icons-material/Hotel';
 import ShareIcon from '@mui/icons-material/Share';
+import AnalyticsIcon from '@mui/icons-material/Analytics'; // NEW ICON
 
 import Carousel from 'react-material-ui-carousel';
 
@@ -64,6 +66,7 @@ const modalStyle = {
   borderRadius: '12px',
 };
 
+// -- ADDED a new "Analytics" item for direct access
 const features = [
   {
     title: 'Mental Health Chatbot',
@@ -119,6 +122,16 @@ const features = [
     link: '/positivemoments',
     image: 'https://images.pexels.com/photos/949592/pexels-photo-949592.jpeg?cs=srgb&dl=pexels-rovenimages-com-344613-949592.jpg&fm=jpg',
   },
+  // NEW FEATURE: ANALYTICS
+  {
+    title: 'Analytics',
+    description: 'View your usage stats and trends.',
+    detailedDescription:
+      'Check out advanced analytics about your journaling, moods, tasks, sleep data, and more. Gain insights into your activities and progress over time.',
+    icon: <AnalyticsIcon fontSize="large" />,
+    link: '/analytics',
+    image: 'https://img.freepik.com/free-photo/data-analyzing-concept-business-analytics_74855-7494.jpg',
+  },
 ];
 
 const Homepage = () => {
@@ -140,8 +153,8 @@ const Homepage = () => {
       sx={{
         backgroundColor: '#1E1E1E',
         minHeight: '100vh',
-        display: 'block', 
-        overflowY: 'auto', 
+        display: 'block',
+        overflowY: 'auto',
       }}
     >
       {/* Navbar */}
@@ -150,10 +163,10 @@ const Homepage = () => {
       <Box sx={{ paddingTop: '80px', paddingBottom: '20px' }}>
         {/* Carousel Section */}
         <Carousel
-          indicators={true}
+          indicators
           navButtonsAlwaysVisible
           animation="fade"
-          interval={5000} 
+          interval={5000}
           navButtonsProps={{
             style: {
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -272,7 +285,6 @@ const Homepage = () => {
                         marginBottom: '15px',
                       }}
                     >
-                      {/* Icon */}
                       <StyledIcon>{feature.icon}</StyledIcon>
                     </Box>
                     <Typography

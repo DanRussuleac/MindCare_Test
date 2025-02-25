@@ -11,6 +11,7 @@ import './App.css';
 import SOSModal from './components/SOSModal';
 import SOSButton from './components/SOSButton';
 import SleepTracker from './Pages/SleepTracker';
+import AnalyticsPage from './Pages/AnalyticsPage';
 
 // >>> ADD THIS <<<
 import DailyTasksRemindersPage from './Pages/DailyTasksRemindersPage';
@@ -79,6 +80,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DailyTasksRemindersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <AnalyticsPage />
             </ProtectedRoute>
           }
         />

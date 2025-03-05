@@ -1,3 +1,4 @@
+// FILE: src/components/Navbar.js
 import React, { useState, useEffect } from 'react';
 import {
   AppBar,
@@ -10,9 +11,17 @@ import {
   Avatar,
   Tooltip,
   Divider,
+  Button,
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
+import ChatIcon from '@mui/icons-material/Chat';
+import BookIcon from '@mui/icons-material/Book';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import MoodIcon from '@mui/icons-material/Mood';
+import HotelIcon from '@mui/icons-material/Hotel';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ForumIcon from '@mui/icons-material/Forum';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import userAvatar from '../images/user.png';
@@ -20,7 +29,7 @@ import userAvatar from '../images/user.png';
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [username, setUsername] = useState(''); 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -52,17 +61,13 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-
-    console.log('Successfully logged out');
-
     handleCloseUserMenu();
-
     navigate('/login');
   };
 
   const handleSettings = () => {
-    console.log('Settings clicked');
     handleCloseUserMenu();
+    navigate('/settings');
   };
 
   return (
@@ -75,24 +80,20 @@ function Navbar() {
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Toolbar sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* Left Side - Home Icon as Link */}
-        <Box sx={{ flex: 1 }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Left Side: Logo and Home */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             component={RouterLink}
             to="/home"
             edge="start"
             color="inherit"
-            aria-label="home"
+            sx={{ mr: 2 }}
           >
-            <HomeIcon sx={{ fontSize: '1.5rem', color: '#FFFFFF' }} />
+            <HomeIcon sx={{ fontSize: '1.8rem', color: '#FFFFFF' }} />
           </IconButton>
-        </Box>
-
-        {/* Center - Title */}
-        <Box sx={{ flex: 1, textAlign: 'center' }}>
           <Typography
-            variant="h5"
+            variant="h6"
             component="div"
             sx={{
               fontFamily: "'Roboto Slab', serif",
@@ -104,14 +105,39 @@ function Navbar() {
           </Typography>
         </Box>
 
-        {/* Right Side - Username and User Profile */}
-        <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        {/* Center: Navigation Links (hidden on xs screens) */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
+          <Button component={RouterLink} to="/chat" sx={{ color: '#fff', textTransform: 'none' }}>
+            <ChatIcon sx={{ mr: 0.5 }} /> Chat
+          </Button>
+          <Button component={RouterLink} to="/journal" sx={{ color: '#fff', textTransform: 'none' }}>
+            <BookIcon sx={{ mr: 0.5 }} /> Journal
+          </Button>
+          <Button component={RouterLink} to="/daily" sx={{ color: '#fff', textTransform: 'none' }}>
+            <ListAltIcon sx={{ mr: 0.5 }} /> Daily Tasks
+          </Button>
+          <Button component={RouterLink} to="/mood-tracker" sx={{ color: '#fff', textTransform: 'none' }}>
+            <MoodIcon sx={{ mr: 0.5 }} /> Mood Tracker
+          </Button>
+          <Button component={RouterLink} to="/sleep-tracker" sx={{ color: '#fff', textTransform: 'none' }}>
+            <HotelIcon sx={{ mr: 0.5 }} /> Sleep
+          </Button>
+          <Button component={RouterLink} to="/analytics" sx={{ color: '#fff', textTransform: 'none' }}>
+            <AnalyticsIcon sx={{ mr: 0.5 }} /> Analytics
+          </Button>
+          <Button component={RouterLink} to="/positivemoments" sx={{ color: '#fff', textTransform: 'none' }}>
+            <ForumIcon sx={{ mr: 0.5 }} /> Forum
+          </Button>
+        </Box>
+
+        {/* Right Side: User Avatar and Dropdown */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography
             sx={{
               color: '#FFFFFF',
-              marginRight: '10px',
+              mr: 1,
               fontWeight: 'bold',
-              fontSize: '1rem',
+              display: { xs: 'none', sm: 'block' },
             }}
           >
             {username || 'Loading...'}
@@ -119,13 +145,9 @@ function Navbar() {
           <Tooltip title="Open Menu">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
-                sx={{
-                  width: 32,
-                  height: 32,
-                  backgroundColor: '#FFFFFF',
-                }}
                 src={userAvatar}
                 alt="User Avatar"
+                sx={{ width: 40, height: 40, backgroundColor: '#fff' }}
               />
             </IconButton>
           </Tooltip>
@@ -141,42 +163,33 @@ function Navbar() {
               vertical: 'top',
               horizontal: 'right',
             }}
-            keepMounted
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            <MenuItem
-              component={RouterLink}
-              to="/journal"
-              onClick={handleCloseUserMenu}
-              sx={{ color: '#FFFFFF' }}
-            >
+            <MenuItem component={RouterLink} to="/journal" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
               Journal
             </MenuItem>
-            <MenuItem
-              component={RouterLink}
-              to="/dailytasks"
-              onClick={handleCloseUserMenu}
-              sx={{ color: '#FFFFFF' }}
-            >
+            <MenuItem component={RouterLink} to="/dailytasks" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
               Daily Tasks
             </MenuItem>
-            <MenuItem
-              component={RouterLink}
-              to="/moodrange"
-              onClick={handleCloseUserMenu}
-              sx={{ color: '#FFFFFF' }}
-            >
-              Mood Range
+            <MenuItem component={RouterLink} to="/mood-tracker" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+              Mood Tracker
+            </MenuItem>
+            <MenuItem component={RouterLink} to="/sleep-tracker" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+              Sleep Tracker
+            </MenuItem>
+            <MenuItem component={RouterLink} to="/analytics" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+              Analytics
+            </MenuItem>
+            <MenuItem component={RouterLink} to="/positivemoments" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+              Forum
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleSettings} sx={{ color: '#FFFFFF' }}>
-              <SettingsIcon sx={{ mr: 1 }} />
-              Settings
+            <MenuItem onClick={handleSettings} sx={{ color: '#fff' }}>
+              <SettingsIcon sx={{ mr: 1 }} /> Settings
             </MenuItem>
-            <MenuItem onClick={handleLogout} sx={{ color: '#FFFFFF' }}>
-              <LogoutIcon sx={{ mr: 1 }} />
-              Logout
+            <MenuItem onClick={handleLogout} sx={{ color: '#fff' }}>
+              <LogoutIcon sx={{ mr: 1 }} /> Logout
             </MenuItem>
           </Menu>
         </Box>

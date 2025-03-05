@@ -1,10 +1,10 @@
+// auth.js
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { pool } from './db.js';
 import express from 'express';
 const router = express.Router();
 import verifyToken from './middleware/auth.js';
-
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -62,17 +62,15 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Updated GET /user endpoint returns both id and username
 router.get('/user', verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
-
-    const userResult = await pool.query('SELECT username FROM users WHERE id = $1', [userId]);
-
+    const userResult = await pool.query('SELECT id, username FROM users WHERE id = $1', [userId]);
     if (userResult.rows.length === 0) {
       return res.status(404).json({ msg: 'User not found' });
     }
-
-    res.json({ username: userResult.rows[0].username });
+    res.json(userResult.rows[0]); // now returns { id, username }
   } catch (err) {
     console.error('Error fetching user info:', err.message);
     res.status(500).send('Server error');

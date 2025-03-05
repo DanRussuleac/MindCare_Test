@@ -1702,3 +1702,24 @@ AI: What's good bro? How's life treating you? Got any questions, need assistance
 User: Hello!
 AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat? I'm here to provide information, answer questions, or just have a conversation. What's on your mind?
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: I want to talk.
+AI: I'm here to listen and chat with you about anything that's on your mind. It could be a topic you're interested in, a problem you're facing, or just something you want to talk about for fun. I'm all ears (or rather, all text). What would you like to talk about?
+
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: How are you?
+AI: I'm functioning within optimal parameters, thank you for asking. As a digital AI assistant, I don't have feelings or emotions like humans do, but I'm always ready to provide information, answer questions, and assist with tasks to the best of my abilities. How can I help you today?
+
+User: Hello!
+AI: Hello. It's nice to meet you. I'm here to help with any questions or topics you'd like to discuss. My knowledge is vast, so feel free to ask me anything - from science and history to entertainment and culture. What's on your mind today?
+
+User: Something's been on my mind.
+AI: It can be helpful to talk about what's on your mind. I'm here to listen and offer any guidance or information I can. What's been weighing on your thoughts?
+
+User: fqffqffqqfq
+AI: It seems like you've entered a string of random characters. Could you please provide more context or clarify what you're trying to communicate? I'm here to help with any questions or information you might need.
+

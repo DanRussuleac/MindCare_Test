@@ -94,5 +94,39 @@ CREATE TABLE IF NOT EXISTS daily_tasks (
 ALTER TABLE users
 ADD COLUMN IF NOT EXISTS daily_task_streak INTEGER NOT NULL DEFAULT 0;
 
+-- Forum Posts Table
+CREATE TABLE forum_posts (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  is_reported BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Forum Comments Table
+CREATE TABLE forum_comments (
+  id SERIAL PRIMARY KEY,
+  post_id INTEGER NOT NULL REFERENCES forum_posts(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Forum Reports Table (Optional for detailed report logging)
+CREATE TABLE forum_reports (
+  id SERIAL PRIMARY KEY,
+  post_id INTEGER NOT NULL REFERENCES forum_posts(id) ON DELETE CASCADE,
+  reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  reason TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+ALTER TABLE forum_posts ADD COLUMN IF NOT EXISTS likes INTEGER NOT NULL DEFAULT 0;
+
+
 
 

@@ -12,9 +12,9 @@ import SOSModal from './components/SOSModal';
 import SOSButton from './components/SOSButton';
 import SleepTracker from './Pages/SleepTracker';
 import AnalyticsPage from './Pages/AnalyticsPage';
-
-// >>> ADD THIS <<<
 import DailyTasksRemindersPage from './Pages/DailyTasksRemindersPage';
+import ForumPage from './Pages/ForumPage';
+
 
 function App() {
   const [isSOSOpen, setIsSOSOpen] = useState(false);
@@ -88,6 +88,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AnalyticsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/positivemoments"
+          element={
+            <ProtectedRoute>
+              <ForumPage />
             </ProtectedRoute>
           }
         />

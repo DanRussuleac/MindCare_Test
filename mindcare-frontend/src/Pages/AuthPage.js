@@ -1,30 +1,95 @@
+// FILE: src/Pages/AuthPage.js
 import React, { useState } from 'react';
 import {
-  Box,
+  Grid,
   Paper,
   Typography,
   Button,
-  Grid,
+  Box,
   Avatar,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
-import ParticleWaveEffectComponent from '../components/ParticleWaveEffectComponent'; 
+import ParticleWaveEffectComponent from '../components/ParticleWaveEffectComponent';
+
+const BACKEND_URL = 'http://localhost:5000';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+
+  const navigate = useNavigate();
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
   };
 
-  const handleLogin = (credentials) => {
-    console.log('Logging in with:', credentials);
+  // Handle login
+  const handleLogin = async (credentials) => {
+    try {
+      const res = await axios.post(`${BACKEND_URL}/api/auth/login`, credentials);
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        console.log('Login successful. Token stored.');
+
+        // Now fetch user info to see if they are admin
+        const userRes = await axios.get(`${BACKEND_URL}/api/auth/user`, {
+          headers: { Authorization: `Bearer ${res.data.token}` },
+        });
+        console.log('Fetched user info:', userRes.data);
+
+        if (userRes.data.role === 'admin') {
+          console.log('Detected admin role. Redirecting to /admin...');
+          navigate('/admin');
+        } else {
+          console.log('Detected non-admin user. Redirecting to /home...');
+          navigate('/home');
+        }
+      } else {
+        console.error('No token received from login endpoint.');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error.response?.data || error.message);
+    }
   };
 
-  const handleRegister = (credentials) => {
-    console.log('Registering with:', credentials);
+  // Handle register
+  const handleRegister = async (credentials) => {
+    try {
+      const res = await axios.post(`${BACKEND_URL}/api/auth/register`, credentials);
+      if (res.data.id) {
+        console.log('Registered successfully:', res.data);
+
+        // Auto-login after registering
+        const loginRes = await axios.post(`${BACKEND_URL}/api/auth/login`, {
+          email: credentials.email,
+          password: credentials.password,
+        });
+        if (loginRes.data.token) {
+          localStorage.setItem('token', loginRes.data.token);
+          console.log('Auto-login successful. Token stored.');
+
+          const userRes = await axios.get(`${BACKEND_URL}/api/auth/user`, {
+            headers: { Authorization: `Bearer ${loginRes.data.token}` },
+          });
+          console.log('Fetched user info after register:', userRes.data);
+
+          if (userRes.data.role === 'admin') {
+            console.log('Detected admin role. Redirecting to /admin...');
+            navigate('/admin');
+          } else {
+            console.log('Detected non-admin user. Redirecting to /home...');
+            navigate('/home');
+          }
+        }
+      } else {
+        console.error('Registration response missing user data.');
+      }
+    } catch (error) {
+      console.error('Error registering user:', error.response?.data || error.message);
+    }
   };
 
   return (
@@ -36,7 +101,7 @@ const AuthPage = () => {
         sm={4}
         md={6}
         sx={{
-          position: 'relative', 
+          position: 'relative',
           backgroundColor: 'grey.900',
           overflow: 'hidden',
         }}
@@ -53,14 +118,16 @@ const AuthPage = () => {
             transform: 'translate(-50%, -50%)',
             color: '#FFFFFF',
             textAlign: 'center',
-            zIndex: 1, 
+            zIndex: 1,
           }}
         >
           <Typography variant="h2" component="h1" gutterBottom>
-            Mindcare
+            MindCare
           </Typography>
           <Typography variant="h6" component="h2">
-            Login to explore your mind
+            {isLogin
+              ? 'Login to explore your mind'
+              : 'Create an account to get started'}
           </Typography>
         </Box>
       </Grid>
@@ -105,11 +172,7 @@ const AuthPage = () => {
             <RegisterForm onSubmit={handleRegister} />
           )}
 
-          <Button
-            onClick={toggleForm}
-            sx={{ mt: 2 }}
-            variant="text"
-          >
+          <Button onClick={toggleForm} sx={{ mt: 2 }} variant="text">
             {isLogin
               ? "Don't have an account? Register"
               : 'Already have an account? Sign in'}

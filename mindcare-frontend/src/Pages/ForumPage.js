@@ -6,6 +6,7 @@ import {
   TextField,
   Card,
   CardContent,
+  CardMedia,
   IconButton,
   Snackbar,
   Alert,
@@ -27,7 +28,8 @@ import Navbar from '../components/Navbar';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
-const heroImage = 'https://images.pexels.com/photos/355423/pexels-photo-355423.jpeg?auto=compress'; 
+const heroImage =
+  'https://images.pexels.com/photos/355423/pexels-photo-355423.jpeg?auto=compress'; 
 // example hero image
 
 const modalStyle = {
@@ -53,6 +55,7 @@ function ForumPage() {
   const [editPostModalOpen, setEditPostModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [postForm, setPostForm] = useState({ title: '', content: '', image_url: '' });
+  const [selectedFile, setSelectedFile] = useState(null);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
   const [selectedCommentPost, setSelectedCommentPost] = useState(null);
   const [commentForm, setCommentForm] = useState('');
@@ -104,9 +107,38 @@ function ForumPage() {
     return 0;
   });
 
+  // File Upload Handlers
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadPostImage = async () => {
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append('post_image', selectedFile);
+    try {
+      const res = await axios.post(`${BACKEND_URL}/api/forum/posts/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Assuming the response returns the URL in res.data.url
+      setPostForm({ ...postForm, image_url: res.data.url });
+      setSnackbar({ open: true, message: 'Image uploaded!', severity: 'success' });
+      setSelectedFile(null); // Clear the file after upload
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setSnackbar({ open: true, message: 'Failed to upload image.', severity: 'error' });
+    }
+  };
+
   // Create Post Modal
   const handleOpenNewPostModal = () => {
     setPostForm({ title: '', content: '', image_url: '' });
+    setSelectedFile(null);
     setNewPostModalOpen(true);
   };
 
@@ -134,6 +166,7 @@ function ForumPage() {
   const handleOpenEditPostModal = (post) => {
     setSelectedPost(post);
     setPostForm({ title: post.title, content: post.content, image_url: post.image_url });
+    setSelectedFile(null);
     setEditPostModalOpen(true);
   };
 
@@ -304,7 +337,16 @@ function ForumPage() {
       </Box>
 
       <Box sx={{ pt: 4, px: 2, pb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2,
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
           {/* "Create Post" button */}
           <Button
             variant="contained"
@@ -324,7 +366,7 @@ function ForumPage() {
           </Button>
 
           {/* Sorting and post count */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
             <Typography variant="body1" sx={{ color: '#B0BEC5' }}>
               {posts.length} total posts
             </Typography>
@@ -341,130 +383,134 @@ function ForumPage() {
           </Box>
         </Box>
 
-        <Grid container spacing={3}>
+        {/* Cards Grid */}
+        <Grid container spacing={3} alignItems="stretch">
           {sortedPosts.map((post) => (
-            <Grid item xs={12} md={6} key={post.id}>
-              {/* Forum Post Card */}
-              <Box
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={post.id}
+              // Make each grid cell a flex container so the Card can stretch
+              sx={{ display: 'flex' }}
+            >
+              <Card
                 sx={{
-                  perspective: '1000px',
-                  transformStyle: 'preserve-3d',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  background:
+                    'linear-gradient(135deg, rgba(44,44,44,0.8), rgba(26,26,26,0.8))',
+                  backdropFilter: 'blur(5px)',
+                  color: '#fff',
+                  borderRadius: '12px',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  // You can still have a slight hover effect without 3D tilt
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
+                  },
                 }}
               >
-                <Card
-                  sx={{
-                    background:
-                      'linear-gradient(135deg, rgba(44,44,44,0.8), rgba(26,26,26,0.8))',
-                    backdropFilter: 'blur(5px)',
-                    color: '#fff',
-                    p: 2,
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-                    transition: 'transform 0.4s, box-shadow 0.4s',
-                    '&:hover': {
-                      transform: 'translateY(-8px) rotateX(3deg) rotateY(2deg)',
-                      boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
-                    },
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                      {post.title}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mb: 1 }}>
-                      {post.content}
-                    </Typography>
-                    {post.image_url && (
-                      <Box
-                        component="img"
-                        src={post.image_url}
-                        alt="Forum Post"
+                {/* Image */}
+                {post.image_url && (
+                  <CardMedia
+                    component="img"
+                    image={post.image_url}
+                    alt="Forum Post"
+                    sx={{
+                      height: 200,
+                      objectFit: 'cover',
+                    }}
+                  />
+                )}
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    {post.title}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    {post.content}
+                  </Typography>
+                  <Typography variant="caption" sx={{ display: 'block', mb: 1, color: '#ccc' }}>
+                    Posted by {post.username} on{' '}
+                    {dayjs(post.created_at).format('MMM D, YYYY h:mm A')}
+                  </Typography>
+                  <Divider sx={{ backgroundColor: '#555', my: 1 }} />
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      mt: 2,
+                    }}
+                  >
+                    {/* Like Button */}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <IconButton
+                        onClick={() => handleLikePost(post.id)}
                         sx={{
-                          width: '100%',
-                          borderRadius: '8px',
-                          my: 1,
-                          maxHeight: '200px',
-                          objectFit: 'cover',
+                          color: '#FF4081',
+                          transition: 'transform 0.2s',
+                          '&:hover': {
+                            transform: 'scale(1.2)',
+                          },
                         }}
-                      />
-                    )}
-                    <Typography variant="caption" sx={{ display: 'block', mb: 1, color: '#ccc' }}>
-                      Posted by {post.username} on{' '}
-                      {dayjs(post.created_at).format('MMM D, YYYY h:mm A')}
-                    </Typography>
-                    <Divider sx={{ backgroundColor: '#555', my: 1 }} />
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {/* Like Button */}
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <IconButton
-                          onClick={() => handleLikePost(post.id)}
-                          sx={{
-                            color: '#FF4081',
-                            transition: 'transform 0.2s',
-                            '&:hover': {
-                              transform: 'scale(1.2)',
-                            },
-                          }}
-                        >
-                          <FavoriteIcon />
-                        </IconButton>
-                        <Typography variant="caption" sx={{ ml: 0.5 }}>
-                          {post.likes}
-                        </Typography>
-                      </Box>
-                      {/* Right side: Comments + Edit/Report */}
-                      <Box>
-                        <Button
-                          variant="outlined"
-                          sx={{
-                            mr: 1,
-                            borderRadius: '20px',
-                            textTransform: 'none',
-                            color: '#fff',
-                            borderColor: '#4CAF50',
-                            '&:hover': {
-                              backgroundColor: '#4CAF50',
-                              color: '#fff',
-                            },
-                          }}
-                          onClick={() => handleOpenCommentsModal(post)}
-                        >
-                          Comments
-                        </Button>
-                        {currentUser && currentUser.id === post.user_id ? (
-                          <>
-                            <IconButton
-                              onClick={() => handleOpenEditPostModal(post)}
-                              sx={{ color: '#4CAF50', mr: 1 }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              onClick={() => handleDeletePost(post.id)}
-                              sx={{ color: '#e53935', mr: 1 }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </>
-                        ) : (
-                          <IconButton
-                            onClick={() => handleReportPost(post.id)}
-                            sx={{ color: '#FF7043', mr: 1 }}
-                          >
-                            <ReportIcon />
-                          </IconButton>
-                        )}
-                      </Box>
+                      >
+                        <FavoriteIcon />
+                      </IconButton>
+                      <Typography variant="caption" sx={{ ml: 0.5 }}>
+                        {post.likes}
+                      </Typography>
                     </Box>
-                  </CardContent>
-                </Card>
-              </Box>
+                    {/* Right side: Comments + Edit/Report */}
+                    <Box>
+                      <Button
+                        variant="outlined"
+                        sx={{
+                          mr: 1,
+                          borderRadius: '20px',
+                          textTransform: 'none',
+                          color: '#fff',
+                          borderColor: '#4CAF50',
+                          '&:hover': {
+                            backgroundColor: '#4CAF50',
+                            color: '#fff',
+                          },
+                        }}
+                        onClick={() => handleOpenCommentsModal(post)}
+                      >
+                        Comments
+                      </Button>
+                      {currentUser && currentUser.id === post.user_id ? (
+                        <>
+                          <IconButton
+                            onClick={() => handleOpenEditPostModal(post)}
+                            sx={{ color: '#4CAF50', mr: 1 }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleDeletePost(post.id)}
+                            sx={{ color: '#e53935', mr: 1 }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </>
+                      ) : (
+                        <IconButton
+                          onClick={() => handleReportPost(post.id)}
+                          sx={{ color: '#FF7043', mr: 1 }}
+                        >
+                          <ReportIcon />
+                        </IconButton>
+                      )}
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
           ))}
         </Grid>
@@ -502,13 +548,31 @@ function ForumPage() {
               onChange={(e) => setPostForm({ ...postForm, content: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <TextField
-              label="Image URL (optional)"
-              fullWidth
-              value={postForm.image_url}
-              onChange={(e) => setPostForm({ ...postForm, image_url: e.target.value })}
-              sx={{ mb: 2 }}
+            {/* File Upload Controls */}
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="new-post-upload-file"
+              type="file"
+              onChange={handleFileChange}
             />
+            <label htmlFor="new-post-upload-file">
+              <Button variant="outlined" component="span" sx={{ mb: 2 }}>
+                Choose Image File
+              </Button>
+            </label>
+            {selectedFile && (
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                {selectedFile.name}
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#4CAF50', '&:hover': { backgroundColor: '#43A047' }, mb: 2 }}
+              onClick={handleUploadPostImage}
+            >
+              Upload Image
+            </Button>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 variant="outlined"
@@ -561,13 +625,31 @@ function ForumPage() {
               onChange={(e) => setPostForm({ ...postForm, content: e.target.value })}
               sx={{ mb: 2 }}
             />
-            <TextField
-              label="Image URL (optional)"
-              fullWidth
-              value={postForm.image_url}
-              onChange={(e) => setPostForm({ ...postForm, image_url: e.target.value })}
-              sx={{ mb: 2 }}
+            {/* File Upload Controls */}
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="edit-post-upload-file"
+              type="file"
+              onChange={handleFileChange}
             />
+            <label htmlFor="edit-post-upload-file">
+              <Button variant="outlined" component="span" sx={{ mb: 2 }}>
+                Choose Image File
+              </Button>
+            </label>
+            {selectedFile && (
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                {selectedFile.name}
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#4CAF50', '&:hover': { backgroundColor: '#43A047' }, mb: 2 }}
+              onClick={handleUploadPostImage}
+            >
+              Upload Image
+            </Button>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 variant="outlined"

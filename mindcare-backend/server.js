@@ -17,6 +17,9 @@ import remindersRoutes from './routes/reminders.js';
 import dailyTasksRoutes from './routes/dailyTasks.js';
 import analyticsRoutes from './routes/analytics.js';
 import forumRoutes from './routes/forum.js';
+import adminRoutes from './routes/admin.js';
+import profileRoutes from './profile.js'; 
+
 
 dotenv.config();
 
@@ -59,6 +62,12 @@ app.use('/api/daily-tasks', verifyToken, dailyTasksRoutes);
 app.use('/api/analytics', verifyToken, analyticsRoutes);
 
 app.use('/api/forum', forumRoutes);
+
+app.use('/api/admin', adminRoutes);
+
+app.use('/api/users', profileRoutes);
+
+app.use('/uploads', express.static('uploads'));
 
 app.post('/api/bot/:conversationId/send', verifyToken, async (req, res) => {
   const { message } = req.body;

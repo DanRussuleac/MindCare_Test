@@ -1,3 +1,4 @@
+// FILE: src/Pages/HomePage.js
 import React, { useState } from 'react';
 import {
   Grid,
@@ -21,7 +22,9 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import MoodIcon from '@mui/icons-material/Mood';
 import HotelIcon from '@mui/icons-material/Hotel';
 import ShareIcon from '@mui/icons-material/Share';
-import AnalyticsIcon from '@mui/icons-material/Analytics'; // NEW ICON
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ForumIcon from '@mui/icons-material/Forum';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import Carousel from 'react-material-ui-carousel';
 
@@ -66,20 +69,19 @@ const modalStyle = {
   borderRadius: '12px',
 };
 
-// -- ADDED a new "Analytics" item for direct access
 const features = [
   {
     title: 'Mental Health Chatbot',
     description: 'Chat with our AI-powered mental health assistant.',
     detailedDescription:
-      'Our AI-powered chatbot is here to listen and provide support whenever you need it. Engage in conversations that can help you understand your feelings and find ways to cope with challenges.',
+      'Our AI-powered chatbot is here to listen and provide support whenever you need it. Engage in conversations that help you understand your feelings and find ways to cope with challenges.',
     icon: <ChatIcon fontSize="large" />,
     link: '/chat',
     image: 'https://wp.technologyreview.com/wp-content/uploads/2021/11/Unknown-2.jpeg',
   },
   {
     title: 'Journal Entry',
-    description: 'Record your thoughts and feelings in your personal journal.',
+    description: 'Record your thoughts and feelings.',
     detailedDescription:
       'Maintain a personal journal to reflect on your daily experiences. Journaling can help you process emotions, reduce stress, and track your personal growth over time.',
     icon: <BookIcon fontSize="large" />,
@@ -88,16 +90,16 @@ const features = [
   },
   {
     title: 'Daily Tasks/Reminders',
-    description: 'Manage your daily tasks and set reminders.',
+    description: 'Manage your daily tasks.',
     detailedDescription:
       'Organize your day with our task manager. Setting goals and reminders can improve productivity and provide a sense of accomplishment, positively impacting your mental well-being.',
     icon: <ListAltIcon fontSize="large" />,
-    link: '/daily',
+    link: '/dailytasks',
     image: 'https://media.idownloadblog.com/wp-content/uploads/2023/08/Reminders-app-keyboard-shortcuts.jpg',
   },
   {
     title: 'Mood Tracking/Graphing',
-    description: 'Track your mood over time and view graphical data.',
+    description: 'Track your mood over time.',
     detailedDescription:
       'Monitor your mood patterns to gain insights into your emotional well-being. Understanding your mood fluctuations can help you identify triggers and manage your mental health more effectively.',
     icon: <MoodIcon fontSize="large" />,
@@ -106,7 +108,7 @@ const features = [
   },
   {
     title: 'Sleep Tracking',
-    description: 'Monitor your sleep patterns and improve rest.',
+    description: 'Monitor your sleep patterns.',
     detailedDescription:
       'Track your sleep habits to ensure you’re getting the rest you need. Good sleep is essential for mental health, affecting mood, energy levels, and overall well-being.',
     icon: <HotelIcon fontSize="large" />,
@@ -114,23 +116,31 @@ const features = [
     image: 'https://img.freepik.com/free-photo/bedroom-with-view-cityscape_188544-7713.jpg',
   },
   {
-    title: 'Positive Moments Sharing',
-    description: 'Share positive moments and uplift others.',
-    detailedDescription:
-      'Share your positive experiences and read about others’ uplifting moments. Fostering positivity can enhance your mood and contribute to a supportive community.',
-    icon: <ShareIcon fontSize="large" />,
-    link: '/positivemoments',
-    image: 'https://images.pexels.com/photos/949592/pexels-photo-949592.jpeg?cs=srgb&dl=pexels-rovenimages-com-344613-949592.jpg&fm=jpg',
-  },
-  // NEW FEATURE: ANALYTICS
-  {
     title: 'Analytics',
     description: 'View your usage stats and trends.',
     detailedDescription:
       'Check out advanced analytics about your journaling, moods, tasks, sleep data, and more. Gain insights into your activities and progress over time.',
     icon: <AnalyticsIcon fontSize="large" />,
     link: '/analytics',
-    image: 'https://img.freepik.com/free-photo/data-analyzing-concept-business-analytics_74855-7494.jpg',
+    image: 'https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google-Analytics-4-Blog-Post-Header-2096x1182.width-1300_O3uqryV.jpg',
+  },
+  {
+    title: 'Forum',
+    description: 'Join discussions and share ideas.',
+    detailedDescription:
+      'Participate in our community forum to share your experiences, ask questions, and support one another. Explore posts and engage with a like-minded community.',
+    icon: <ForumIcon fontSize="large" />,
+    link: '/positivemoments',
+    image: 'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+  },
+  {
+    title: 'Profile',
+    description: 'Manage your personal information.',
+    detailedDescription:
+      'View and update your profile details, including uploading a custom profile picture and selecting your country. Keep your information up-to-date to help us better serve you.',
+    icon: <AccountCircleIcon fontSize="large" />,
+    link: '/profile',
+    image: 'https://i.pinimg.com/736x/c0/74/9b/c0749b7cc401421662ae901ec8f9f660.jpg',
   },
 ];
 
@@ -149,14 +159,7 @@ const Homepage = () => {
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: '#1E1E1E',
-        minHeight: '100vh',
-        display: 'block',
-        overflowY: 'auto',
-      }}
-    >
+    <Box sx={{ backgroundColor: '#1E1E1E', minHeight: '100vh', overflowY: 'auto' }}>
       {/* Navbar */}
       <Navbar />
 
@@ -168,21 +171,13 @@ const Homepage = () => {
           animation="fade"
           interval={5000}
           navButtonsProps={{
-            style: {
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              color: '#FFFFFF',
-            },
+            style: { backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#FFFFFF' },
           }}
           indicatorIconButtonProps={{
-            style: {
-              padding: '6px',
-              color: '#B0BEC5',
-            },
+            style: { padding: '6px', color: '#B0BEC5' },
           }}
           activeIndicatorIconButtonProps={{
-            style: {
-              color: '#4CAF50',
-            },
+            style: { color: '#4CAF50' },
           }}
           sx={{ marginBottom: '30px' }}
         >
@@ -214,9 +209,7 @@ const Homepage = () => {
                   textAlign: 'center',
                   padding: '20px',
                   transition: 'background-color 0.5s',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                  },
+                  '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
                 }}
               >
                 <Typography
@@ -251,10 +244,7 @@ const Homepage = () => {
                     borderRadius: '25px',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                     transition: 'background-color 0.3s, transform 0.3s',
-                    '&:hover': {
-                      backgroundColor: '#43A047',
-                      transform: 'translateY(-2px)',
-                    },
+                    '&:hover': { backgroundColor: '#43A047', transform: 'translateY(-2px)' },
                   }}
                 >
                   Explore
@@ -264,27 +254,14 @@ const Homepage = () => {
           ))}
         </Carousel>
 
-        {/* Features Section */}
-        <Box
-          sx={{
-            paddingLeft: '20px',
-            paddingRight: '20px',
-            paddingBottom: '40px',
-          }}
-        >
+        {/* Features Section (Grid of Cards) */}
+        <Box sx={{ padding: '0 20px 40px 20px' }}>
           <Grid container spacing={3}>
             {features.map((feature, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <StyledCard onClick={() => handleOpenModal(feature)}>
                   <CardContent sx={{ padding: '20px' }}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginBottom: '15px',
-                      }}
-                    >
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '15px' }}>
                       <StyledIcon>{feature.icon}</StyledIcon>
                     </Box>
                     <Typography
@@ -310,13 +287,7 @@ const Homepage = () => {
                     >
                       {feature.description}
                     </Typography>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginTop: '15px',
-                      }}
-                    >
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
                       <Button
                         variant="outlined"
                         component={RouterLink}
@@ -329,10 +300,7 @@ const Homepage = () => {
                           padding: '6px 12px',
                           borderRadius: '20px',
                           transition: 'background-color 0.3s, color 0.3s',
-                          '&:hover': {
-                            backgroundColor: '#4CAF50',
-                            color: '#FFFFFF',
-                          },
+                          '&:hover': { backgroundColor: '#4CAF50', color: '#FFFFFF' },
                         }}
                       >
                         Explore
@@ -352,10 +320,7 @@ const Homepage = () => {
         onClose={handleCloseModal}
         closeAfterTransition
         BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 700,
-          sx: { backgroundColor: 'rgba(0, 0, 0, 0.85)' },
-        }}
+        BackdropProps={{ timeout: 700, sx: { backgroundColor: 'rgba(0, 0, 0, 0.85)' } }}
       >
         <Fade in={modalOpen}>
           <Box sx={modalStyle}>
@@ -387,9 +352,7 @@ const Homepage = () => {
                     sx={{
                       backgroundColor: '#4CAF50',
                       color: '#FFFFFF',
-                      '&:hover': {
-                        backgroundColor: '#43A047',
-                      },
+                      '&:hover': { backgroundColor: '#43A047' },
                       borderRadius: '25px',
                       padding: '10px 20px',
                       fontSize: '1rem',

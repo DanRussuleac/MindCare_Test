@@ -28,7 +28,9 @@ import userAvatar from '../images/user.png';
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
+  const [role, setRole] = useState('');
+  const [profilePic, setProfilePic] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,12 +39,12 @@ function Navbar() {
         const token = localStorage.getItem('token');
         if (token) {
           const response = await fetch('http://localhost:5000/api/auth/user', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           });
           const data = await response.json();
           setUsername(data.username);
+          setRole(data.role);
+          setProfilePic(data.profile_pic || '');
         }
       } catch (error) {
         console.error('Error fetching user info:', error);
@@ -83,13 +85,7 @@ function Navbar() {
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Left Side: Logo and Home */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            component={RouterLink}
-            to="/home"
-            edge="start"
-            color="inherit"
-            sx={{ mr: 2 }}
-          >
+          <IconButton component={RouterLink} to="/home" edge="start" color="inherit" sx={{ mr: 2 }}>
             <HomeIcon sx={{ fontSize: '1.8rem', color: '#FFFFFF' }} />
           </IconButton>
           <Typography
@@ -105,7 +101,7 @@ function Navbar() {
           </Typography>
         </Box>
 
-        {/* Center: Navigation Links (hidden on xs screens) */}
+        {/* Center: Navigation Links */}
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
           <Button component={RouterLink} to="/chat" sx={{ color: '#fff', textTransform: 'none' }}>
             <ChatIcon sx={{ mr: 0.5 }} /> Chat
@@ -120,7 +116,7 @@ function Navbar() {
             <MoodIcon sx={{ mr: 0.5 }} /> Mood Tracker
           </Button>
           <Button component={RouterLink} to="/sleep-tracker" sx={{ color: '#fff', textTransform: 'none' }}>
-            <HotelIcon sx={{ mr: 0.5 }} /> Sleep
+            <HotelIcon sx={{ mr: 0.5 }} /> Sleep Tracker
           </Button>
           <Button component={RouterLink} to="/analytics" sx={{ color: '#fff', textTransform: 'none' }}>
             <AnalyticsIcon sx={{ mr: 0.5 }} /> Analytics
@@ -128,6 +124,16 @@ function Navbar() {
           <Button component={RouterLink} to="/positivemoments" sx={{ color: '#fff', textTransform: 'none' }}>
             <ForumIcon sx={{ mr: 0.5 }} /> Forum
           </Button>
+          <Button component={RouterLink} to="/profile" sx={{ color: '#fff', textTransform: 'none' }}>
+            <MoodIcon sx={{ mr: 0.5 }} /> Profile
+          </Button>
+          {role === 'admin' && (
+            <Button component={RouterLink} to="/admin" sx={{ color: '#fff', textTransform: 'none' }}>
+              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                Admin
+              </Typography>
+            </Button>
+          )}
         </Box>
 
         {/* Right Side: User Avatar and Dropdown */}
@@ -145,7 +151,7 @@ function Navbar() {
           <Tooltip title="Open Menu">
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
-                src={userAvatar}
+                src={profilePic ? `http://localhost:5000/${profilePic}` : userAvatar}
                 alt="User Avatar"
                 sx={{ width: 40, height: 40, backgroundColor: '#fff' }}
               />
@@ -155,17 +161,14 @@ function Navbar() {
             sx={{ mt: '45px' }}
             id="menu-appbar"
             anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
+            <MenuItem component={RouterLink} to="/profile" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+              Profile
+            </MenuItem>
             <MenuItem component={RouterLink} to="/journal" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
               Journal
             </MenuItem>
@@ -184,6 +187,11 @@ function Navbar() {
             <MenuItem component={RouterLink} to="/positivemoments" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
               Forum
             </MenuItem>
+            {role === 'admin' && (
+              <MenuItem component={RouterLink} to="/admin" onClick={handleCloseUserMenu} sx={{ color: '#fff' }}>
+                Admin
+              </MenuItem>
+            )}
             <Divider />
             <MenuItem onClick={handleSettings} sx={{ color: '#fff' }}>
               <SettingsIcon sx={{ mr: 1 }} /> Settings

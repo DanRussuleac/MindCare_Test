@@ -1,6 +1,7 @@
 // forumController.js
 import { pool } from './db.js';
 import dayjs from 'dayjs';
+import path from 'path';
 
 // Simple censorship function
 const bannedWords = ['badword1', 'badword2', 'badword3']; // Add your banned words here
@@ -240,5 +241,20 @@ export const deleteComment = async (req, res) => {
   } catch (error) {
     console.error('Error deleting comment:', error);
     res.status(500).json({ error: 'Failed to delete comment.' });
+  }
+};
+
+// Upload post image
+export const uploadPostImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded.' });
+    }
+    // Build the URL for the uploaded file
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Failed to upload image.' });
   }
 };

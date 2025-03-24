@@ -14,6 +14,8 @@ import SleepTracker from './Pages/SleepTracker';
 import AnalyticsPage from './Pages/AnalyticsPage';
 import DailyTasksRemindersPage from './Pages/DailyTasksRemindersPage';
 import ForumPage from './Pages/ForumPage';
+import AdminPage from './Pages/AdminPage';
+import ProfilePage from './Pages/ProfilePage';
 
 
 function App() {
@@ -96,6 +98,22 @@ function App() {
           element={
             <ProtectedRoute>
               <ForumPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

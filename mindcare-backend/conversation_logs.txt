@@ -1826,3 +1826,15 @@ if __name__ == "__main__":
 * If you're struggling with suicidal thoughts, please reach out to a trusted friend, family member, or mental health professional for support.
 * The resources provided in this script are for general informational purposes only and may not be comprehensive or up-to-date.
 
+User: Something's been on my mind.
+AI: I'm here to listen. What's been on your mind? Is it something specific, a problem you're trying to solve, or just a feeling you can't quite put into words? I'm all ears, or rather, all text.
+
+User: im sad about my final year project 
+AI: I'm so sorry to hear that you're feeling sad about your final year project. It's normal to feel overwhelmed or stressed about a big project, especially when it's a significant part of your academic journey.
+
+Can you tell me more about what's bothering you? Is it the project itself, the deadline, or something else? Sometimes talking about it can help clarify things and give us a better idea of how to tackle the issue.
+
+Also, take a deep breath and remember that you've made it this far in your studies, and you have the skills and knowledge to complete this project. It might be helpful to break it down into smaller, manageable tasks, and focus on one step at a time.
+
+What's your project about, and what are your goals for it? I'm here to listen and help if I can.
+

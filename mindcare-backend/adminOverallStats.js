@@ -1,4 +1,3 @@
-// FILE: controllers/adminOverallStats.js
 import { pool } from './db.js';
 
 export const getOverallStats = async (req, res) => {

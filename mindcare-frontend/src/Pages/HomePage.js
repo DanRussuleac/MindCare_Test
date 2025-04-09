@@ -1,4 +1,3 @@
-// FILE: src/Pages/HomePage.js
 import React, { useState } from 'react';
 import {
   Grid,

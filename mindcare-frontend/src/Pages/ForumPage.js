@@ -30,7 +30,6 @@ import dayjs from 'dayjs';
 
 const heroImage =
   'https://images.pexels.com/photos/355423/pexels-photo-355423.jpeg?auto=compress'; 
-// example hero image
 
 const modalStyle = {
   position: 'absolute',

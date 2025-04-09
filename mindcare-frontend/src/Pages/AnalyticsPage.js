@@ -1,4 +1,3 @@
-// FILE: src/Pages/AnalyticsPage.js
 import React, { useEffect, useState } from 'react';
 import {
   Box,

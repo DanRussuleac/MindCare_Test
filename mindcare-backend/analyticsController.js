@@ -1,5 +1,4 @@
-// analyticsController.js (in your project root or controllers folder)
-import { pool } from './db.js'; // or ../db.js if in controllers folder
+import { pool } from './db.js'; 
 import dayjs from 'dayjs';
 
 export const getUserAnalyticsDetailed = async (req, res) => {

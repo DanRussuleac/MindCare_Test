@@ -1,4 +1,3 @@
-// FILE: src/Pages/AuthPage.js
 import React, { useState } from 'react';
 import {
   Grid,

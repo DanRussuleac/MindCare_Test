@@ -1,4 +1,3 @@
-// routes/forum.js
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
@@ -52,3 +51,5 @@ router.put('/comments/:id', verifyToken, updateComment);
 router.delete('/comments/:id', verifyToken, deleteComment);
 
 export default router;
+
+

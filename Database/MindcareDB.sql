@@ -45,7 +45,7 @@ CREATE TABLE sleep_entries (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     duration_hours NUMERIC(4,2) NOT NULL,
-    sleep_quality INTEGER,  -- 1 to 5, optional
+    sleep_quality INTEGER, 
     notes TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
@@ -56,18 +56,18 @@ CREATE TABLE sleep_entries (
 CREATE TABLE IF NOT EXISTS sleep_goals (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    daily_sleep_target NUMERIC(4,2) NOT NULL,       -- e.g. 8.00 hours
-    target_bedtime TIME DEFAULT NULL,               -- user might have a standard bedtime
-    target_waketime TIME DEFAULT NULL,              -- user might have a standard wake time
+    daily_sleep_target NUMERIC(4,2) NOT NULL,      
+    target_bedtime TIME DEFAULT NULL,              
+    target_waketime TIME DEFAULT NULL,            
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS sleep_analysis (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    analysis_date DATE NOT NULL DEFAULT CURRENT_DATE, -- date of analysis
-    analysis_text TEXT NOT NULL,                      -- summary or analysis from the AI
-    suggestions TEXT,                                 -- any suggestions from the AI
+    analysis_date DATE NOT NULL DEFAULT CURRENT_DATE, 
+    analysis_text TEXT NOT NULL,                      
+    suggestions TEXT,                              
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS reminders (
 CREATE TABLE IF NOT EXISTS daily_tasks (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  date DATE NOT NULL,                     -- which day this task applies to
-  content TEXT NOT NULL,                  -- short text describing the task
+  date DATE NOT NULL,                    
+  content TEXT NOT NULL,               
   is_completed BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
@@ -94,7 +94,6 @@ CREATE TABLE IF NOT EXISTS daily_tasks (
 ALTER TABLE users
 ADD COLUMN IF NOT EXISTS daily_task_streak INTEGER NOT NULL DEFAULT 0;
 
--- Forum Posts Table
 CREATE TABLE forum_posts (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -106,7 +105,6 @@ CREATE TABLE forum_posts (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Forum Comments Table
 CREATE TABLE forum_comments (
   id SERIAL PRIMARY KEY,
   post_id INTEGER NOT NULL REFERENCES forum_posts(id) ON DELETE CASCADE,
@@ -116,7 +114,6 @@ CREATE TABLE forum_comments (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Forum Reports Table (Optional for detailed report logging)
 CREATE TABLE forum_reports (
   id SERIAL PRIMARY KEY,
   post_id INTEGER NOT NULL REFERENCES forum_posts(id) ON DELETE CASCADE,

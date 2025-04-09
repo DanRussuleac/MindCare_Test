@@ -1,5 +1,3 @@
-// FILE: src/Pages/DailyTasksRemindersPage.js
-
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -31,7 +29,6 @@ import Navbar from '../components/Navbar'; // Ensure correct path
 
 const BACKEND_URL = 'http://localhost:5000'; // Adjust if needed
 
-// Keep the fancy gradient for modals (optional)
 const modalStyle = {
   position: 'absolute',
   top: '50%',

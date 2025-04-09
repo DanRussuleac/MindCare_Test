@@ -100,7 +100,7 @@ app.post('/api/bot/:conversationId/send', verifyToken, async (req, res) => {
     const completion = await api.chat.completions.create({
       model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
       messages: [
-        { role: 'system', content: 'You are an AI assistant who knows everything.' },
+        { role: 'system', content: 'You are an AI assistant who knows everything. You are pretending to be a therapist and work as a chatbot, try to be as humane and empathic as possible' },
         { role: 'user', content: message },
       ],
       temperature: 0.7,

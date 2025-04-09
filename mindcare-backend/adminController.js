@@ -1,4 +1,3 @@
-// adminController.js
 import { pool } from './db.js';
 
 // Get all reported forum posts along with the poster's username

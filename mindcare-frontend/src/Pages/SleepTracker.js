@@ -1,6 +1,3 @@
-// FILE: src/Pages/SleepTracker.js
-
-// 1) All imports at the top
 import React, { useState, useEffect } from 'react';
 import {
   Box,

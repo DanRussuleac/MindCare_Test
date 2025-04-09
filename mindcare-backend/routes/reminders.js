@@ -1,4 +1,3 @@
-// routes/reminders.js
 import express from 'express';
 import {
   createReminder,

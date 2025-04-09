@@ -1,4 +1,3 @@
-// routes/sleepGoalsRoutes.js
 import express from 'express';
 import {
   getSleepGoal,

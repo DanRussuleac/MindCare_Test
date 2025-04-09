@@ -1,4 +1,3 @@
-// forumController.js
 import { pool } from './db.js';
 import dayjs from 'dayjs';
 import path from 'path';

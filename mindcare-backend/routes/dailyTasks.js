@@ -1,4 +1,3 @@
-// routes/dailyTasks.js
 import express from 'express';
 import {
   getDailyTasks,

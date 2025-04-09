@@ -1838,3 +1838,20 @@ Also, take a deep breath and remember that you've made it this far in your studi
 
 What's your project about, and what are your goals for it? I'm here to listen and help if I can.
 
+User: Hello!
+AI: Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?
+
+User: Hello, im not feeling too well.
+AI: I'm here to help.  Since I'm a text-based AI, I'm not a medical professional, but I can try to provide some general guidance or suggestions to help you feel better. 
+
+Can you tell me a bit more about how you're feeling? What symptoms are you experiencing, and how long have you been feeling this way? This will help me provide more tailored advice.
+
+User: Hello!
+AI: Hello there, it's so nice to connect with you. I'm here to listen and support you in any way I can. Please feel comfortable and safe in our conversation. How are you doing today? Is there something specific on your mind that you'd like to talk about, or would you like to just take a moment to breathe and see where our conversation takes us?
+
+User: Im not feeling too well.
+AI: I'm so sorry to hear that you're not feeling well. It takes a lot of courage to reach out and talk about how we're feeling, so thank you for trusting me with this. Can you tell me a bit more about what's going on? Is it a physical issue, or is it more related to your emotional or mental well-being?
+
+User: Hello!
+AI: Welcome to our chat. I'm so glad you've taken the first step in reaching out for support. I'm here to listen and offer guidance in a safe and non-judgmental space. Please feel free to share as much or as little as you'd like about what brings you here today. How are you feeling, and what's been on your mind lately?
+

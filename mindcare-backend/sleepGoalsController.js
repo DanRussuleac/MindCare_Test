@@ -1,4 +1,3 @@
-// sleepGoalsController.js
 import { pool } from './db.js';
 
 export const getSleepGoal = async (req, res) => {

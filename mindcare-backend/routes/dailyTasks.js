@@ -15,7 +15,6 @@ router.post('/', createDailyTask);
 router.put('/:id', updateDailyTask);
 router.delete('/:id', deleteDailyTask);
 
-// Optional AI generation route
 router.post('/generate', generateDailyTasksAI);
 
 export default router;

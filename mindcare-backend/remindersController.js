@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 // CREATE reminder
 export const createReminder = async (req, res) => {
   try {
-    const userId = req.userId; // 'verifyToken' sets req.userId
+    const userId = req.userId; 
     const { content, reminder_time } = req.body;
 
     const query = `

@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
  */
 export const createSleepEntry = async (req, res) => {
   try {
-    const userId = req.userId; // from verifyToken middleware
+    const userId = req.userId; 
     const { start_time, end_time, sleep_quality, notes } = req.body;
 
     // Compute duration in hours (as a floating number)

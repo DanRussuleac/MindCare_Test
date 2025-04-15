@@ -49,7 +49,7 @@ const modalStyle = {
 function ForumPage() {
   const [posts, setPosts] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  const [sortOrder, setSortOrder] = useState('newest'); // 'newest' or 'liked'
+  const [sortOrder, setSortOrder] = useState('newest'); 
   const [newPostModalOpen, setNewPostModalOpen] = useState(false);
   const [editPostModalOpen, setEditPostModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import path from 'path';
 
 // Simple censorship function
-const bannedWords = ['badword1', 'badword2', 'badword3']; // Add your banned words here
+const bannedWords = ['ugly', 'loser', 'suicide']; 
 const censorText = (text) => {
   let censored = text;
   bannedWords.forEach((word) => {

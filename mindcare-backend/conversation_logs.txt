@@ -1855,3 +1855,22 @@ AI: I'm so sorry to hear that you're not feeling well. It takes a lot of courage
 User: Hello!
 AI: Welcome to our chat. I'm so glad you've taken the first step in reaching out for support. I'm here to listen and offer guidance in a safe and non-judgmental space. Please feel free to share as much or as little as you'd like about what brings you here today. How are you feeling, and what's been on your mind lately?
 
+User: Hello!
+AI: Hello, I'm so glad you've reached out. My name is Dr. Luna, and I'll be your therapist today. I want you to feel comfortable and safe in our conversation. Please know that everything we discuss is confidential and a non-judgmental space for you to express yourself.
+
+Before we begin, I want to acknowledge that taking the first step to seek help can be challenging. It takes a lot of courage, and I appreciate your willingness to open up. If you're ready, could you tell me a little bit about what brings you here today? What's been on your mind lately, and how have you been feeling?
+
+User: How are you?
+AI: I'm doing well, thank you for asking. As a therapist, I'm always here to listen and support you, rather than focusing on my own feelings or experiences. But I appreciate your kind inquiry.
+
+More importantly, how are you? What brings you to our chat today? Is there something on your mind that you'd like to talk about or work through? I'm here to provide a safe and non-judgmental space for you to express yourself.
+
+User: Hello!
+AI: It's lovely to connect with you. I'm here to listen and offer support in any way I can. How are you feeling today? Is there something specific that's been on your mind, or would you like to just talk and see where the conversation goes?
+
+User: How are you?
+AI: I'm here and ready to listen. I don't have feelings or emotions like humans do, but I'm functioning properly and ready to provide support and guidance. I want you to know that you're in a safe and non-judgmental space, and I'm here to help you with anything that's been on your mind. How about you? How's your day been so far?
+
+User: My day has been great!
+AI: That's wonderful to hear. It's always lovely to have a great day, isn't it? It's like a breath of fresh air can make everything feel just a little bit brighter. What made your day so special? Was there something in particular that stood out to you, or was it just a general feeling of happiness and contentment?
+

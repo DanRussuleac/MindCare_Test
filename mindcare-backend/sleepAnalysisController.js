@@ -6,7 +6,6 @@ export const analyzeSleepData = async (req, res) => {
   try {
     const userId = req.userId;
     const { range = 7 } = req.body; 
-    // default: look at last 7 days. You can pass a 'range' param from the front-end for 30, etc.
 
     // 1) Fetch the user’s sleep_entries from the last N days
     const startDate = dayjs().subtract(range, 'day').format('YYYY-MM-DD');

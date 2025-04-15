@@ -74,7 +74,7 @@ router.post('/profile/picture', verifyToken, upload.single('profile_pic'), async
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    const profilePicPath = req.file.path; // e.g., "uploads/profile-1-1672222222.jpg"
+    const profilePicPath = req.file.path; 
     const result = await pool.query(
       'UPDATE users SET profile_pic = $1 WHERE id = $2 RETURNING profile_pic;',
       [profilePicPath, userId]

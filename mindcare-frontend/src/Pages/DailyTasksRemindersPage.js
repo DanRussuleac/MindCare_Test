@@ -25,9 +25,9 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import dayjs from 'dayjs';
 import axios from 'axios';
 
-import Navbar from '../components/Navbar'; // Ensure correct path
+import Navbar from '../components/Navbar'; 
 
-const BACKEND_URL = 'http://localhost:5000'; // Adjust if needed
+const BACKEND_URL = 'http://localhost:5000'; 
 
 const modalStyle = {
   position: 'absolute',

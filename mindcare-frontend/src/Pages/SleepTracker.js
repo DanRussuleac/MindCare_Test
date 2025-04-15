@@ -45,7 +45,7 @@ import {
 } from 'recharts';
 
 // 2) Constants & styles
-const BACKEND_URL = 'http://localhost:5000'; // or your actual backend
+const BACKEND_URL = 'http://localhost:5000'; 
 const pageBackgroundStyle = {
   backgroundColor: '#1E1E1E',
   minHeight: '100vh',

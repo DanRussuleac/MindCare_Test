@@ -28,8 +28,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const BACKEND_URL = 'http://localhost:5000'; // Adjust if needed
-
+const BACKEND_URL = 'http://localhost:5000'; 
 const COLORS = ['#4CAF50', '#FF7043', '#29B6F6', '#AB47BC', '#FFCA28', '#ec407a'];
 
 function AnalyticsPage() {

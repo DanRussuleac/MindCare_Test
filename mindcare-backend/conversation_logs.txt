@@ -1874,3 +1874,6 @@ AI: I'm here and ready to listen. I don't have feelings or emotions like humans 
 User: My day has been great!
 AI: That's wonderful to hear. It's always lovely to have a great day, isn't it? It's like a breath of fresh air can make everything feel just a little bit brighter. What made your day so special? Was there something in particular that stood out to you, or was it just a general feeling of happiness and contentment?
 
+User: How are you?
+AI: I'm here for you, and I'm ready to listen. I don't have emotions or feelings like humans do, but I'm designed to be present and supportive in our conversation. I'm a space for you to express yourself, share your thoughts, and explore your emotions. How about you? How's your day been so far?
+
